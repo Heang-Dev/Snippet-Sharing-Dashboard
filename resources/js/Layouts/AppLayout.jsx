@@ -23,27 +23,32 @@ export default function AppLayout({ children, title, breadcrumbs = [] }) {
         if (breadcrumbs.length > 0) return breadcrumbs;
 
         const segments = url.split('/').filter(Boolean);
-        const crumbs = [{ label: 'Dashboard', href: '/dashboard' }];
+        const crumbs = [];
 
-        let currentPath = '';
-        segments.forEach((segment, index) => {
-            currentPath += `/${segment}`;
+        // Add "Building Your Application" style first crumb for context
+        if (segments[0] === 'dashboard') {
+            crumbs.push({ label: 'Building Your Application', href: '/dashboard' });
+        } else if (segments[0] === 'snippets') {
+            crumbs.push({ label: 'Snippets', href: '/snippets' });
+        } else if (segments[0] === 'teams') {
+            crumbs.push({ label: 'Teams', href: '/teams' });
+        } else {
+            crumbs.push({ label: 'Dashboard', href: '/dashboard' });
+        }
 
-            // Skip if it's the dashboard since we already have it
-            if (segment === 'dashboard') return;
-
-            // Format the segment nicely
-            const label = segment
+        // Add the current page title
+        if (title) {
+            crumbs.push({ label: title });
+        } else if (segments.length > 1) {
+            const lastSegment = segments[segments.length - 1];
+            const label = lastSegment
                 .split('-')
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' ');
-
-            if (index === segments.length - 1) {
-                crumbs.push({ label: title || label });
-            } else {
-                crumbs.push({ label, href: currentPath });
-            }
-        });
+            crumbs.push({ label });
+        } else {
+            crumbs.push({ label: 'Data Fetching' });
+        }
 
         return crumbs;
     };
@@ -54,29 +59,27 @@ export default function AppLayout({ children, title, breadcrumbs = [] }) {
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                {finalBreadcrumbs.map((crumb, index) => (
-                                    <BreadcrumbItem key={index}>
-                                        {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
-                                        {crumb.href ? (
-                                            <BreadcrumbLink asChild>
-                                                <Link href={crumb.href}>{crumb.label}</Link>
-                                            </BreadcrumbLink>
-                                        ) : (
-                                            <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                                        )}
-                                    </BreadcrumbItem>
-                                ))}
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </div>
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+                    <SidebarTrigger className="-ml-1" />
+                    <Separator orientation="vertical" className="mr-2 h-4" />
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            {finalBreadcrumbs.map((crumb, index) => (
+                                <BreadcrumbItem key={index} className={index === 0 ? "hidden md:block" : ""}>
+                                    {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
+                                    {crumb.href ? (
+                                        <BreadcrumbLink asChild>
+                                            <Link href={crumb.href}>{crumb.label}</Link>
+                                        </BreadcrumbLink>
+                                    ) : (
+                                        <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                                    )}
+                                </BreadcrumbItem>
+                            ))}
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                <div className="flex flex-1 flex-col gap-4 p-4">
                     {children}
                 </div>
             </SidebarInset>
