@@ -25,6 +25,10 @@ export function formatRelativeTime(date) {
     return formatDate(date);
 }
 
+export function formatDistanceToNow(date) {
+    return formatRelativeTime(date);
+}
+
 export function truncate(str, length = 100) {
     if (!str) return "";
     if (str.length <= length) return str;

@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
+        login: '',
         password: '',
         remember: false,
     });
@@ -41,19 +41,19 @@ export default function Login({ status }) {
 
                 <form onSubmit={submit} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="login">Email or Username</Label>
                         <Input
-                            id="email"
-                            type="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            placeholder="name@example.com"
+                            id="login"
+                            type="text"
+                            value={data.login}
+                            onChange={(e) => setData('login', e.target.value)}
+                            placeholder="name@example.com or username"
                             autoComplete="username"
                             autoFocus
-                            className={errors.email ? 'border-destructive' : ''}
+                            className={errors.login ? 'border-destructive' : ''}
                         />
-                        {errors.email && (
-                            <p className="text-sm text-destructive">{errors.email}</p>
+                        {errors.login && (
+                            <p className="text-sm text-destructive">{errors.login}</p>
                         )}
                     </div>
 
