@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, HasUuids, Notifiable, SoftDeletes;
 
@@ -22,6 +23,7 @@ class User extends Authenticatable
         'full_name',
         'bio',
         'avatar_url',
+        'avatar',
         'website_url',
         'github_url',
         'twitter_url',
@@ -30,6 +32,8 @@ class User extends Authenticatable
         'email_verified_at',
         'last_login_at',
         'settings',
+        'social_provider',
+        'social_id',
     ];
 
     protected $hidden = [
