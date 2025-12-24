@@ -1,0 +1,250 @@
+/* Registry Styles - Complete Design Systems */
+
+/* ========== DEFAULT STYLE ========== */
+/* Standard shadcn design with rounded corners and modern feel */
+.style-default {
+    /* Typography */
+    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+
+    /* Border Radius - Compact */
+    --radius: 0.25rem;
+    --radius-lg: 0.375rem;
+    --radius-md: 0.1875rem;
+    --radius-sm: 0.125rem;
+
+    /* Component Heights - Compact like mono */
+    --height-xs: 1.5rem;  /* 24px */
+    --height-sm: 1.75rem; /* 28px */
+    --height-md: 2rem;    /* 32px */
+    --height-lg: 2.25rem; /* 36px */
+    --height-xl: 2.5rem;  /* 40px */
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Focus Ring */
+    --ring-width: 1px;
+    --ring-offset: 1px;
+
+    /* Animations & Transitions */
+    --transition-duration: 150ms;
+    --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-duration: 1s;
+    --animation-timing: linear;
+
+    /* Typography Scale - Smaller like mono */
+    --text-xs: 0.6875rem;   /* 11px */
+    --text-sm: 0.75rem;     /* 12px */
+    --text-base: 0.8125rem; /* 13px */
+    --text-lg: 0.875rem;    /* 14px */
+    --text-xl: 1rem;        /* 16px */
+    --text-2xl: 1.125rem;   /* 18px */
+    --text-3xl: 1.25rem;    /* 20px */
+    --text-4xl: 1.5rem;     /* 24px */
+
+    /* Spacing - Tighter like mono */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 0.75rem;
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.25rem;
+}
+
+/* Apply Default Style */
+.style-default body {
+    font-family: var(--font-sans);
+}
+
+.style-default .font-mono {
+    font-family: var(--font-mono);
+}
+
+/* ========== NEW YORK STYLE ========== */
+/* More condensed, subtle shadows, refined aesthetic */
+.style-newyork {
+    /* Typography */
+    --font-sans: Inter, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+
+    /* Border Radius - Compact */
+    --radius: 0.25rem;
+    --radius-lg: 0.375rem;
+    --radius-md: 0.1875rem;
+    --radius-sm: 0.125rem;
+
+    /* Component Heights - Compact like mono */
+    --height-xs: 1.5rem;  /* 24px */
+    --height-sm: 1.75rem; /* 28px */
+    --height-md: 2rem;    /* 32px */
+    --height-lg: 2.25rem; /* 36px */
+    --height-xl: 2.5rem;  /* 40px */
+
+    /* Shadows - With subtle shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Focus Ring */
+    --ring-width: 1px;
+    --ring-offset: 1px;
+
+    /* Animations & Transitions */
+    --transition-duration: 150ms;
+    --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-duration: 1s;
+    --animation-timing: linear;
+
+    /* Typography Scale - Smaller like mono */
+    --text-xs: 0.6875rem;   /* 11px */
+    --text-sm: 0.75rem;     /* 12px */
+    --text-base: 0.8125rem; /* 13px */
+    --text-lg: 0.875rem;    /* 14px */
+    --text-xl: 1rem;        /* 16px */
+    --text-2xl: 1.125rem;   /* 18px */
+    --text-3xl: 1.25rem;    /* 20px */
+    --text-4xl: 1.5rem;     /* 24px */
+
+    /* Spacing - Tighter like mono */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 0.75rem;
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.25rem;
+}
+
+/* Apply New York Style */
+.style-newyork body {
+    font-family: var(--font-sans);
+}
+
+.style-newyork .font-mono {
+    font-family: var(--font-mono);
+}
+
+/* Add subtle shadows to cards and buttons */
+.style-newyork .shadow-sm {
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========== MONO STYLE ========== */
+/* Terminal/Technical aesthetic with monospace font and minimal design */
+
+/* Global fallback for any future components */
+.style-mono *:where(:not(svg):not(path):not(g):not(circle):not(rect):not(line):not(polyline):not(polygon)) {
+    /* Force border radius to 0 for ALL elements */
+    border-radius: 0 !important;
+}
+
+.style-mono {
+    /* Typography - All monospace */
+    --font-sans: "SF Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-mono: "SF Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Border Radius - Completely sharp */
+    --radius: 0;
+    --radius-lg: 0;
+    --radius-md: 0;
+    --radius-sm: 0;
+
+    /* Component Heights - Compact */
+    --height-xs: 1.5rem;  /* 24px */
+    --height-sm: 1.75rem; /* 28px */
+    --height-md: 2rem;    /* 32px */
+    --height-lg: 2.25rem; /* 36px */
+    --height-xl: 2.5rem;  /* 40px */
+
+    /* Shadows - None */
+    --shadow-sm: none;
+    --shadow: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
+
+    /* Focus Ring - Minimal */
+    --ring-width: 1px;
+    --ring-offset: 0;
+
+    /* Animations & Transitions - Same as other themes for consistency */
+    --transition-duration: 150ms;
+    --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-duration: 1s;
+    --animation-timing: linear;
+
+    /* Typography Scale - Smaller for monospace */
+    --text-xs: 0.6875rem;   /* 11px */
+    --text-sm: 0.75rem;     /* 12px */
+    --text-base: 0.8125rem; /* 13px */
+    --text-lg: 0.875rem;    /* 14px */
+    --text-xl: 1rem;        /* 16px */
+    --text-2xl: 1.125rem;   /* 18px */
+    --text-3xl: 1.25rem;    /* 20px */
+    --text-4xl: 1.5rem;     /* 24px */
+
+    /* Spacing - Tighter */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 0.75rem;
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.25rem;
+}
+
+/* Apply Mono Style */
+.style-mono body {
+    font-family: var(--font-mono);
+    letter-spacing: -0.03em;
+    line-height: 1.4;
+    font-size: var(--text-base);
+}
+
+/* Override ALL border radius */
+.style-mono * {
+    border-radius: 0 !important;
+}
+
+/* Make all text monospace */
+.style-mono *:not(svg):not(path) {
+    font-family: var(--font-mono) !important;
+}
+
+/* Terminal aesthetic borders - thinner and more prominent */
+.style-mono [class*="border"] {
+    border-color: rgb(0 0 0 / 0.2);
+}
+
+.style-mono.dark [class*="border"] {
+    border-color: rgb(255 255 255 / 0.2);
+}
+
+/* Remove all shadows */
+.style-mono [class*="shadow"] {
+    box-shadow: none !important;
+}
+
+/* Buttons in mono style */
+.style-mono button,
+.style-mono [role="button"] {
+    border-radius: 0 !important;
+    font-family: var(--font-mono) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+/* Inputs in mono style */
+.style-mono input,
+.style-mono select,
+.style-mono textarea {
+    border-radius: 0 !important;
+    font-family: var(--font-mono) !important;
+    font-size: var(--text-sm);
+    background: transparent;
+    border-width: 1px;
+}

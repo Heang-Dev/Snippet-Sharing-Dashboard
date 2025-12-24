@@ -1,0 +1,31 @@
+/* Switch component visibility enhancements */
+
+/* Ensure switch thumb is always visible */
+[data-radix-collection-item] [role="switch"] span {
+    /* Strong shadow for visibility on any background */
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Use theme colors from CSS variables */
+[role="switch"][data-state="unchecked"] {
+    background-color: hsl(var(--muted)) !important;
+}
+
+/* Use primary color from theme */
+[role="switch"][data-state="checked"] {
+    background-color: hsl(var(--primary)) !important;
+}
+
+/* Add hover effects for better UX */
+[role="switch"]:hover {
+    opacity: 0.9;
+}
+
+/* Focus styles */
+[role="switch"]:focus-visible {
+    outline: 2px solid var(--color-primary, #3B82F6);
+    outline-offset: 2px;
+}

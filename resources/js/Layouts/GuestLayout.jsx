@@ -1,22 +1,35 @@
 import { Link } from '@inertiajs/react';
 import { Command } from 'lucide-react';
+import { Toaster } from '@/Components/ui/sonner';
+import { AuthThemeToggle } from '@/Components/auth-theme-toggle';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-            <div className="flex w-full max-w-sm flex-col gap-6">
-                <Link href="/" className="flex items-center gap-2 self-center font-medium">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                        <Command className="size-4" />
-                    </div>
-                    Snippet Share
-                </Link>
-                {children}
+        <>
+            <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10 overflow-y-auto">
+                {/* Theme Toggle - Top Right */}
+                <div className="fixed top-4 right-4 z-10">
+                    <AuthThemeToggle className="bg-background/80 backdrop-blur-sm hover:bg-background/90" />
+                </div>
+
+                <div className="w-full max-w-sm md:max-w-5xl my-auto">
+                    {children}
+                </div>
+
+                {/* Terms & Privacy - Outside Card */}
+                <div className="mt-4 text-center text-xs text-muted-foreground">
+                    By clicking continue, you agree to our{" "}
+                    <Link href="#" className="underline underline-offset-4 hover:text-primary">
+                        Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="#" className="underline underline-offset-4 hover:text-primary">
+                        Privacy Policy
+                    </Link>
+                    .
+                </div>
             </div>
-            <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-                By continuing, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
-            </div>
-        </div>
+            <Toaster richColors position="top-right" />
+        </>
     );
 }
