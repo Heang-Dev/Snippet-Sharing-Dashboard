@@ -1,8 +1,11 @@
-import { Head, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
-import { Label } from '@/Components/ui/label';
 import { PasswordInput } from '@/Components/PasswordInput';
 import {
     Card,
@@ -11,20 +14,88 @@ import {
     CardHeader,
     CardTitle,
 } from '@/Components/ui/card';
-import { Command } from 'lucide-react';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/Components/ui/form';
+import { KeyRound, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+// Zod validation schema
+const resetPasswordSchema = z.object({
+    token: z.string(),
+    email: z
+        .string()
+        .min(1, 'Email is required')
+        .email('Please enter a valid email address'),
+    password: z
+        .string()
+        .min(1, 'Password is required')
+        .min(8, 'Password must be at least 8 characters')
+        .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+        .regex(/[0-9]/, 'Password must contain at least one number'),
+    password_confirmation: z
+        .string()
+        .min(1, 'Please confirm your password'),
+}).refine((data) => data.password === data.password_confirmation, {
+    message: 'Passwords do not match',
+    path: ['password_confirmation'],
+});
 
 export default function ResetPassword({ token, email }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        token: token,
-        email: email,
-        password: '',
-        password_confirmation: '',
+    const { props } = usePage();
+    const { errors: serverErrors } = props;
+
+    const form = useForm({
+        resolver: zodResolver(resetPasswordSchema),
+        defaultValues: {
+            token: token || '',
+            email: email || '',
+            password: '',
+            password_confirmation: '',
+        },
+        mode: 'onChange',
     });
 
-    const submit = (e) => {
-        e.preventDefault();
-        post('/reset-password', {
-            onFinish: () => reset('password', 'password_confirmation'),
+    const { isSubmitting, isValid } = form.formState;
+
+    // Set server-side errors
+    useEffect(() => {
+        if (serverErrors?.email) {
+            form.setError('email', { message: serverErrors.email });
+        }
+        if (serverErrors?.password) {
+            form.setError('password', { message: serverErrors.password });
+        }
+    }, [serverErrors]);
+
+    const onSubmit = (data) => {
+        router.post('/reset-password', data, {
+            onSuccess: () => {
+                toast.success('Password reset successful!', {
+                    description: 'Redirecting to login...',
+                });
+            },
+            onError: (errors) => {
+                if (errors.email) {
+                    form.setError('email', { message: errors.email });
+                    toast.error('Password reset failed', {
+                        description: errors.email,
+                    });
+                }
+                if (errors.password) {
+                    form.setError('password', { message: errors.password });
+                }
+            },
+            onFinish: () => {
+                form.setValue('password', '');
+                form.setValue('password_confirmation', '');
+            },
         });
     };
 
@@ -32,15 +103,13 @@ export default function ResetPassword({ token, email }) {
         <GuestLayout>
             <Head title="Reset Password" />
 
-            <Card className="overflow-hidden max-h-[85vh]">
-                <div className="grid lg:grid-cols-2 h-full">
+            <Card className="overflow-hidden">
+                <div className="grid lg:grid-cols-2">
                     {/* Left Column - Form */}
-                    <div className="p-6 md:p-8 overflow-y-auto">
+                    <div className="p-6 md:p-8">
                         <CardHeader className="px-0 pt-0">
                             <div className="flex justify-center mb-6">
-                                <div className="flex aspect-square size-12 items-center justify-center rounded-lg overflow-hidden bg-primary">
-                                    <Command className="size-6 text-primary-foreground" />
-                                </div>
+                                <KeyRound className="h-12 w-12 text-primary" />
                             </div>
                             <CardTitle className="text-2xl font-bold text-center">
                                 Reset Password
@@ -51,71 +120,87 @@ export default function ResetPassword({ token, email }) {
                         </CardHeader>
 
                         <CardContent className="px-0 pb-0">
-                            <form onSubmit={submit} className="space-y-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        autoComplete="email"
-                                        className={errors.email ? 'border-destructive' : ''}
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="email"
+                                                        autoComplete="email"
+                                                        readOnly
+                                                        className="bg-muted"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                    {errors.email && (
-                                        <p className="text-sm text-destructive">{errors.email}</p>
-                                    )}
-                                </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password">New Password</Label>
-                                    <PasswordInput
-                                        id="password"
-                                        value={data.password}
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        placeholder="Enter new password"
-                                        autoComplete="new-password"
-                                        autoFocus
-                                        className={errors.password ? 'border-destructive' : ''}
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>New Password <span className="text-destructive">*</span></FormLabel>
+                                                <FormControl>
+                                                    <PasswordInput
+                                                        placeholder="Enter new password"
+                                                        autoComplete="new-password"
+                                                        autoFocus
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                    {errors.password && (
-                                        <p className="text-sm text-destructive">{errors.password}</p>
-                                    )}
-                                </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password_confirmation">Confirm Password</Label>
-                                    <PasswordInput
-                                        id="password_confirmation"
-                                        value={data.password_confirmation}
-                                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                                        placeholder="Confirm new password"
-                                        autoComplete="new-password"
-                                        className={errors.password_confirmation ? 'border-destructive' : ''}
+                                    <FormField
+                                        control={form.control}
+                                        name="password_confirmation"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Confirm Password <span className="text-destructive">*</span></FormLabel>
+                                                <FormControl>
+                                                    <PasswordInput
+                                                        placeholder="Confirm new password"
+                                                        autoComplete="new-password"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                    {errors.password_confirmation && (
-                                        <p className="text-sm text-destructive">{errors.password_confirmation}</p>
-                                    )}
-                                </div>
 
-                                <Button type="submit" className="w-full" disabled={processing}>
-                                    {processing ? 'Resetting...' : 'Reset Password'}
-                                </Button>
-                            </form>
+                                    <Button type="submit" className="w-full" disabled={isSubmitting || !isValid}>
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                Resetting...
+                                            </>
+                                        ) : (
+                                            'Reset Password'
+                                        )}
+                                    </Button>
+                                </form>
+                            </Form>
                         </CardContent>
                     </div>
 
                     {/* Right Column - Illustration */}
                     <div className="relative hidden bg-muted lg:flex items-center justify-center p-8">
-                        <div className="flex flex-col items-center justify-center text-center space-y-4">
-                            <div className="flex aspect-square size-24 items-center justify-center rounded-2xl bg-primary/10">
-                                <Command className="size-12 text-primary" />
-                            </div>
-                            <h3 className="text-2xl font-semibold">Snippet Share</h3>
-                            <p className="text-muted-foreground max-w-xs">
-                                Create a strong password to keep your account secure.
-                            </p>
-                        </div>
+                        <img
+                            src="/images/illustrations/forgot-password.svg"
+                            alt="Reset password illustration"
+                            className="max-w-full max-h-80 object-contain"
+                        />
                     </div>
                 </div>
             </Card>
