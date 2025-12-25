@@ -11,8 +11,8 @@ export function CodePatternBackground({ className, children }) {
             {/* Base gradient background */}
             <div className="absolute inset-0 bg-gradient-to-br from-muted via-muted to-muted/80" />
 
-            {/* Code pattern overlay */}
-            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]">
+            {/* Code pattern overlay - using primary color for better contrast */}
+            <div className="absolute inset-0 opacity-[0.12] dark:opacity-[0.15]">
                 <svg
                     className="absolute inset-0 h-full w-full"
                     xmlns="http://www.w3.org/2000/svg"
@@ -22,62 +22,80 @@ export function CodePatternBackground({ className, children }) {
                             id="code-pattern"
                             x="0"
                             y="0"
-                            width="100"
-                            height="100"
+                            width="120"
+                            height="120"
                             patternUnits="userSpaceOnUse"
                         >
                             {/* Curly braces */}
                             <text
                                 x="10"
-                                y="20"
-                                className="fill-foreground"
-                                style={{ fontSize: "14px", fontFamily: "monospace" }}
+                                y="25"
+                                className="fill-primary"
+                                style={{ fontSize: "18px", fontFamily: "monospace", fontWeight: "600" }}
                             >
                                 {"{"}
                             </text>
                             <text
-                                x="80"
-                                y="80"
-                                className="fill-foreground"
-                                style={{ fontSize: "14px", fontFamily: "monospace" }}
+                                x="95"
+                                y="100"
+                                className="fill-primary"
+                                style={{ fontSize: "18px", fontFamily: "monospace", fontWeight: "600" }}
                             >
                                 {"}"}
                             </text>
                             {/* Angle brackets */}
                             <text
-                                x="50"
-                                y="40"
-                                className="fill-foreground"
-                                style={{ fontSize: "12px", fontFamily: "monospace" }}
+                                x="55"
+                                y="50"
+                                className="fill-primary"
+                                style={{ fontSize: "14px", fontFamily: "monospace", fontWeight: "500" }}
                             >
                                 {"</>"}
                             </text>
                             {/* Parentheses */}
                             <text
                                 x="25"
-                                y="60"
-                                className="fill-foreground"
-                                style={{ fontSize: "10px", fontFamily: "monospace" }}
+                                y="75"
+                                className="fill-primary"
+                                style={{ fontSize: "12px", fontFamily: "monospace", fontWeight: "500" }}
                             >
                                 {"()"}
                             </text>
                             {/* Square brackets */}
                             <text
-                                x="70"
-                                y="25"
-                                className="fill-foreground"
-                                style={{ fontSize: "10px", fontFamily: "monospace" }}
+                                x="80"
+                                y="30"
+                                className="fill-primary"
+                                style={{ fontSize: "12px", fontFamily: "monospace", fontWeight: "500" }}
                             >
                                 {"[]"}
                             </text>
                             {/* Semicolon */}
                             <text
-                                x="45"
-                                y="90"
-                                className="fill-foreground"
-                                style={{ fontSize: "12px", fontFamily: "monospace" }}
+                                x="50"
+                                y="110"
+                                className="fill-primary"
+                                style={{ fontSize: "14px", fontFamily: "monospace", fontWeight: "600" }}
                             >
                                 {";"}
+                            </text>
+                            {/* Hash/comment */}
+                            <text
+                                x="5"
+                                y="105"
+                                className="fill-primary"
+                                style={{ fontSize: "11px", fontFamily: "monospace", fontWeight: "500" }}
+                            >
+                                {"#"}
+                            </text>
+                            {/* Arrow function */}
+                            <text
+                                x="70"
+                                y="65"
+                                className="fill-primary"
+                                style={{ fontSize: "11px", fontFamily: "monospace", fontWeight: "500" }}
+                            >
+                                {"=>"}
                             </text>
                         </pattern>
                     </defs>
@@ -85,11 +103,11 @@ export function CodePatternBackground({ className, children }) {
                 </svg>
             </div>
 
-            {/* Floating code snippets - decorative elements */}
+            {/* Floating code snippets - decorative elements with primary color */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {/* Top left code block */}
-                <div className="absolute -top-4 -left-4 rotate-[-8deg] opacity-[0.04] dark:opacity-[0.06]">
-                    <pre className="text-xs font-mono text-foreground leading-relaxed">
+                <div className="absolute top-8 left-4 rotate-[-6deg] opacity-[0.15] dark:opacity-[0.18]">
+                    <pre className="text-sm font-mono text-primary leading-relaxed font-medium">
 {`function share() {
   const snippet = {
     code: "...",
@@ -101,8 +119,8 @@ export function CodePatternBackground({ className, children }) {
                 </div>
 
                 {/* Top right code block */}
-                <div className="absolute top-20 -right-8 rotate-[6deg] opacity-[0.04] dark:opacity-[0.06]">
-                    <pre className="text-xs font-mono text-foreground leading-relaxed">
+                <div className="absolute top-16 right-4 rotate-[5deg] opacity-[0.15] dark:opacity-[0.18]">
+                    <pre className="text-sm font-mono text-primary leading-relaxed font-medium">
 {`import { Code } from
   "snippet-share";
 
@@ -111,8 +129,8 @@ export default App;`}
                 </div>
 
                 {/* Bottom left code block */}
-                <div className="absolute bottom-32 -left-12 rotate-[4deg] opacity-[0.04] dark:opacity-[0.06]">
-                    <pre className="text-xs font-mono text-foreground leading-relaxed">
+                <div className="absolute bottom-24 left-8 rotate-[3deg] opacity-[0.15] dark:opacity-[0.18]">
+                    <pre className="text-sm font-mono text-primary leading-relaxed font-medium">
 {`const teams = await
   getTeams();
 teams.map(t =>
@@ -121,8 +139,8 @@ teams.map(t =>
                 </div>
 
                 {/* Bottom right code block */}
-                <div className="absolute -bottom-8 right-20 rotate-[-5deg] opacity-[0.04] dark:opacity-[0.06]">
-                    <pre className="text-xs font-mono text-foreground leading-relaxed">
+                <div className="absolute bottom-16 right-8 rotate-[-4deg] opacity-[0.15] dark:opacity-[0.18]">
+                    <pre className="text-sm font-mono text-primary leading-relaxed font-medium">
 {`<Snippet
   language="py"
   theme="dark"
@@ -131,25 +149,25 @@ teams.map(t =>
                 </div>
 
                 {/* Center left */}
-                <div className="absolute top-1/3 -left-16 rotate-[12deg] opacity-[0.03] dark:opacity-[0.05]">
-                    <pre className="text-[10px] font-mono text-foreground">
+                <div className="absolute top-1/3 left-2 rotate-[8deg] opacity-[0.12] dark:opacity-[0.15]">
+                    <pre className="text-xs font-mono text-primary font-medium">
 {`// Share code
 // With teams`}
                     </pre>
                 </div>
 
                 {/* Center right */}
-                <div className="absolute top-1/2 -right-20 rotate-[-10deg] opacity-[0.03] dark:opacity-[0.05]">
-                    <pre className="text-[10px] font-mono text-foreground">
+                <div className="absolute top-1/2 right-2 rotate-[-6deg] opacity-[0.12] dark:opacity-[0.15]">
+                    <pre className="text-xs font-mono text-primary font-medium">
 {`/* syntax
    highlight */`}
                     </pre>
                 </div>
             </div>
 
-            {/* Gradient orbs for depth */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+            {/* Gradient orbs for depth - more visible */}
+            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
 
             {/* Content */}
             <div className="relative z-10">{children}</div>
