@@ -89,6 +89,7 @@ export default function ResetPassword({ token, email }) {
                 toast.success('Password reset successfully!', {
                     description: 'You can now login with your new password.',
                 });
+                setIsLoading(false);
             },
             onError: (errors) => {
                 if (errors.email) {
@@ -104,11 +105,6 @@ export default function ResetPassword({ token, email }) {
                 toast.error('Failed to reset password', {
                     description: errors.email || errors.password || 'Please check your inputs and try again.',
                 });
-                setIsLoading(false);
-            },
-            onFinish: () => {
-                form.setValue('password', '');
-                form.setValue('password_confirmation', '');
                 setIsLoading(false);
             },
         });

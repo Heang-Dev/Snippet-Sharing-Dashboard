@@ -129,13 +129,6 @@ export default function Register() {
         }
     };
 
-    // Reset password fields when component unmounts
-    useEffect(() => {
-        return () => {
-            form.setValue("password", "");
-            form.setValue("password_confirmation", "");
-        };
-    }, []);
 
     // Handle social authentication with source tracking
     const handleSocialAuth = (provider) => {

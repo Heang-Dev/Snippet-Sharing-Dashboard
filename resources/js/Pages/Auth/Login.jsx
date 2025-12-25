@@ -105,12 +105,6 @@ export default function Login({ status, canResetPassword = true }) {
                 setFailedAttempts(0);
                 sessionStorage.removeItem('loginFailedAttempts');
             },
-            onFinish: () => {
-                // Reset password field on finish (only if not rate limited)
-                if (!rateLimited) {
-                    form.setValue("password", "");
-                }
-            },
         });
     };
 
