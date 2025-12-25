@@ -32,7 +32,7 @@ import { AuthIllustration, AuthIllustrations } from "@/Components/auth-illustrat
 
 // Define the validation schema
 const loginSchema = z.object({
-    email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+    login: z.string().min(1, "Email or username is required"),
     password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
 });
 
@@ -48,7 +48,7 @@ export default function Login({ status, canResetPassword = true }) {
     const form = useForm({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: "admin@example.com",
+            login: "admin@example.com",
             password: "password",
         },
         mode: "onChange", // Real-time validation
@@ -66,10 +66,10 @@ export default function Login({ status, canResetPassword = true }) {
         router.post("/login", data, {
             preserveScroll: true,
             onError: (errors) => {
-                // Check for rate limit error in email field
-                if (errors.email && (errors.email.includes('Too many') || errors.email.includes('seconds') || errors.email.includes('minute'))) {
-                    const secondsMatch = errors.email.match(/(\d+)\s+second/);
-                    const minutesMatch = errors.email.match(/(\d+)\s+minute/);
+                // Check for rate limit error in login field
+                if (errors.login && (errors.login.includes('Too many') || errors.login.includes('seconds') || errors.login.includes('minute'))) {
+                    const secondsMatch = errors.login.match(/(\d+)\s+second/);
+                    const minutesMatch = errors.login.match(/(\d+)\s+minute/);
 
                     let seconds = 60;
                     if (secondsMatch) {
@@ -84,7 +84,7 @@ export default function Login({ status, canResetPassword = true }) {
                 }
 
                 // Track failed attempts for credential errors
-                if (errors.email && errors.email.includes('credentials')) {
+                if (errors.login && errors.login.includes('credentials')) {
                     setFailedAttempts(prev => {
                         const newCount = prev + 1;
                         sessionStorage.setItem('loginFailedAttempts', newCount.toString());
@@ -93,8 +93,8 @@ export default function Login({ status, canResetPassword = true }) {
                 }
 
                 // Handle server-side validation errors
-                if (errors.email) {
-                    form.setError("email", { message: errors.email });
+                if (errors.login) {
+                    form.setError("login", { message: errors.login });
                 }
                 if (errors.password) {
                     form.setError("password", { message: errors.password });
@@ -119,20 +119,20 @@ export default function Login({ status, canResetPassword = true }) {
 
     // Set server errors if they exist
     useEffect(() => {
-        if (serverErrors?.email) {
-            form.setError("email", { message: serverErrors.email });
+        if (serverErrors?.login) {
+            form.setError("login", { message: serverErrors.login });
         }
         if (serverErrors?.password) {
             form.setError("password", { message: serverErrors.password });
         }
     }, [serverErrors]);
 
-    // Handle email blur to detect typos
-    const handleEmailBlur = () => {
-        const email = form.getValues('email');
+    // Handle login field blur to detect email typos
+    const handleLoginBlur = () => {
+        const loginValue = form.getValues('login');
 
-        if (email && email.includes('@')) {
-            const typoDetection = detectEmailTypo(email);
+        if (loginValue && loginValue.includes('@')) {
+            const typoDetection = detectEmailTypo(loginValue);
 
             if (typoDetection) {
                 setEmailSuggestion(typoDetection);
@@ -147,7 +147,7 @@ export default function Login({ status, canResetPassword = true }) {
     // Handle suggestion click
     const handleSuggestionClick = () => {
         if (emailSuggestion) {
-            form.setValue('email', emailSuggestion.suggestion, {
+            form.setValue('login', emailSuggestion.suggestion, {
                 shouldValidate: true,
                 shouldDirty: true
             });
@@ -347,34 +347,33 @@ export default function Login({ status, canResetPassword = true }) {
                                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                                     <FormField
                                         control={form.control}
-                                        name="email"
+                                        name="login"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel htmlFor="email">
-                                                    Email <span className="text-destructive">*</span>
+                                                <FormLabel htmlFor="login">
+                                                    Email or Username <span className="text-destructive">*</span>
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        id="email"
-                                                        type="email"
-                                                        name="email"
-                                                        placeholder="m@example.com"
+                                                        id="login"
+                                                        type="text"
+                                                        name="login"
+                                                        placeholder="email@example.com or username"
                                                         autoComplete="email username"
-                                                        inputMode="email"
                                                         spellCheck="false"
                                                         autoFocus
-                                                        aria-invalid={!!form.formState.errors.email}
-                                                        aria-describedby={form.formState.errors.email ? "email-error" : "email-description"}
+                                                        aria-invalid={!!form.formState.errors.login}
+                                                        aria-describedby={form.formState.errors.login ? "login-error" : "login-description"}
                                                         onBlur={(e) => {
                                                             field.onBlur(e);
-                                                            handleEmailBlur();
+                                                            handleLoginBlur();
                                                         }}
                                                     />
                                                 </FormControl>
-                                                {!form.formState.errors.email && !emailSuggestion && (
-                                                    <FormDescription id="email-description">
-                                                        Your account email
+                                                {!form.formState.errors.login && !emailSuggestion && (
+                                                    <FormDescription id="login-description">
+                                                        Your account email or username
                                                     </FormDescription>
                                                 )}
                                                 {emailSuggestion && (
@@ -390,7 +389,7 @@ export default function Login({ status, canResetPassword = true }) {
                                                         ?
                                                     </p>
                                                 )}
-                                                <FormMessage id="email-error" role="alert" aria-live="polite" />
+                                                <FormMessage id="login-error" role="alert" aria-live="polite" />
                                             </FormItem>
                                         )}
                                     />
