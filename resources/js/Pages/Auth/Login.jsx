@@ -380,7 +380,7 @@ export default function Login({ status, canResetPassword = true }) {
                                                 </FormControl>
                                                 {!form.formState.errors.email && !emailSuggestion && (
                                                     <FormDescription id="email-description">
-                                                        Enter your email address to sign in
+                                                        Your account email
                                                     </FormDescription>
                                                 )}
                                                 {emailSuggestion && (
@@ -432,7 +432,7 @@ export default function Login({ status, canResetPassword = true }) {
                                                 </FormControl>
                                                 {!form.formState.errors.password && (
                                                     <FormDescription id="password-description">
-                                                        Enter your password to continue
+                                                        Min 8 characters
                                                     </FormDescription>
                                                 )}
                                                 <FormMessage id="password-error" role="alert" aria-live="polite" />
@@ -519,18 +519,6 @@ export default function Login({ status, canResetPassword = true }) {
                 </div>
             </Card>
 
-            {/* Terms & Privacy - Outside Card */}
-            <div className="mt-4 text-center text-xs text-muted-foreground">
-                By clicking continue, you agree to our{" "}
-                <Link href="#" className="underline underline-offset-4 hover:text-primary">
-                    Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="#" className="underline underline-offset-4 hover:text-primary">
-                    Privacy Policy
-                </Link>
-                .
-            </div>
         </GuestLayout>
     );
 }
