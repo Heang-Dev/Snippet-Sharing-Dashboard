@@ -15,8 +15,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-                mono: ["JetBrains Mono", "Fira Code", "monospace"],
+                sans: ["JetBrains Mono", "monospace"],
+                mono: ["JetBrains Mono", "monospace"],
             },
             borderRadius: {
                 lg: 'var(--radius)',
