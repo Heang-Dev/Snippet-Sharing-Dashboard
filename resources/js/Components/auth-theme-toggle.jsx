@@ -10,35 +10,39 @@ import { useState, useEffect } from "react";
 
 /**
  * Theme toggle for unauthenticated pages (login, register, etc.)
- * Saves theme preference to localStorage only
+ * Saves theme preference to localStorage only (no database)
  */
 export function AuthThemeToggle({ className = "" }) {
     const [currentTheme, setCurrentTheme] = useState('system');
 
     // Load current theme from localStorage on mount
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            setCurrentTheme(savedTheme);
-        }
+        const savedTheme = localStorage.getItem('theme') || 'system';
+        setCurrentTheme(savedTheme);
+        applyTheme(savedTheme);
     }, []);
+
+    const applyTheme = (theme) => {
+        const root = document.documentElement;
+
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else if (theme === 'light') {
+            root.classList.remove('dark');
+        } else {
+            // System preference
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                root.classList.add('dark');
+            } else {
+                root.classList.remove('dark');
+            }
+        }
+    };
 
     const setTheme = (newTheme) => {
         localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
         setCurrentTheme(newTheme);
-
-        // Apply theme to document
-        const root = window.document.documentElement;
-        root.classList.remove('light', 'dark');
-
-        if (newTheme === 'system') {
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light';
-            root.classList.add(systemTheme);
-        } else {
-            root.classList.add(newTheme);
-        }
     };
 
     return (

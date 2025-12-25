@@ -22,8 +22,11 @@ import {
     FormMessage,
     FormDescription,
 } from '@/Components/ui/form';
-import { Command, ArrowLeft, Mail, Shield, Clock, RefreshCw, Loader2 } from 'lucide-react';
+import { ArrowLeft, Mail, Shield, Clock, RefreshCw, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { detectEmailTypo } from '@/utils/emailValidation';
+import { AuthThemeToggle } from '@/Components/auth-theme-toggle';
+import { AuthIllustration, AuthIllustrations } from '@/Components/auth-illustration';
 
 // Zod validation schema for email
 const emailSchema = z.object({
@@ -39,6 +42,7 @@ export default function ForgotPassword() {
 
     // State management
     const [step, setStep] = useState('request'); // 'request' | 'verify'
+    const [emailSuggestion, setEmailSuggestion] = useState(null);
     const [sessionToken, setSessionToken] = useState('');
     const [submittedEmail, setSubmittedEmail] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -65,6 +69,32 @@ export default function ForgotPassword() {
                         watchedEmail.includes('@') &&
                         watchedEmail.includes('.') &&
                         watchedEmail.length > 5;
+
+    // Handle email blur to detect typos
+    const handleEmailBlur = () => {
+        const email = emailForm.getValues('email');
+        if (email && email.includes('@')) {
+            const typoDetection = detectEmailTypo(email);
+            if (typoDetection) {
+                setEmailSuggestion(typoDetection);
+            } else {
+                setEmailSuggestion(null);
+            }
+        } else {
+            setEmailSuggestion(null);
+        }
+    };
+
+    // Handle suggestion click
+    const handleSuggestionClick = () => {
+        if (emailSuggestion) {
+            emailForm.setValue('email', emailSuggestion.suggestion, {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+            setEmailSuggestion(null);
+        }
+    };
 
     // Set server-side errors
     useEffect(() => {
@@ -287,7 +317,7 @@ export default function ForgotPassword() {
                                             name="email"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>
+                                                    <FormLabel htmlFor="email">
                                                         Email Address <span className="text-destructive">*</span>
                                                     </FormLabel>
                                                     <FormControl>
@@ -295,18 +325,39 @@ export default function ForgotPassword() {
                                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                                             <Input
                                                                 {...field}
+                                                                id="email"
                                                                 type="email"
                                                                 placeholder="you@example.com"
                                                                 autoComplete="email"
                                                                 autoFocus
                                                                 className="pl-10"
+                                                                onBlur={handleEmailBlur}
+                                                                aria-label="Email address"
+                                                                aria-describedby="email-description"
+                                                                aria-invalid={!!emailForm.formState.errors.email}
+                                                                aria-required="true"
                                                             />
                                                         </div>
                                                     </FormControl>
-                                                    <FormDescription>
+                                                    <FormDescription id="email-description">
                                                         We'll send you a one-time password (OTP) via email
                                                     </FormDescription>
                                                     <FormMessage />
+
+                                                    {/* Email Typo Suggestion */}
+                                                    {emailSuggestion && (
+                                                        <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                                                            Did you mean{' '}
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleSuggestionClick}
+                                                                className="font-semibold underline hover:no-underline"
+                                                            >
+                                                                {emailSuggestion.suggestion}
+                                                            </button>
+                                                            ?
+                                                        </p>
+                                                    )}
                                                 </FormItem>
                                             )}
                                         />
@@ -315,6 +366,7 @@ export default function ForgotPassword() {
                                             type="submit"
                                             className="w-full"
                                             disabled={isLoading || !isEmailValid}
+                                            aria-label="Send OTP"
                                         >
                                             {isLoading ? (
                                                 <>
@@ -329,10 +381,10 @@ export default function ForgotPassword() {
                                         <div className="text-center">
                                             <Link
                                                 href="/login"
-                                                className="inline-flex items-center text-sm text-muted-foreground hover:text-primary"
+                                                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                                             >
-                                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                                Back to login
+                                                <ArrowLeft className="h-4 w-4" />
+                                                Back to Login
                                             </Link>
                                         </div>
                                     </form>
@@ -360,6 +412,7 @@ export default function ForgotPassword() {
                                                     className="w-12 h-14 text-center text-2xl font-semibold border rounded-md focus:ring-2 focus:ring-primary focus:border-primary transition-all bg-background"
                                                     onChange={(e) => handleOtpInput(index, e)}
                                                     onKeyDown={(e) => handleOtpKeydown(index, e)}
+                                                    aria-label={`Digit ${index + 1}`}
                                                 />
                                             ))}
                                         </div>
@@ -375,6 +428,7 @@ export default function ForgotPassword() {
                                         onClick={() => handleVerifyOTP()}
                                         className="w-full"
                                         disabled={otp.some(d => !d) || isVerifying}
+                                        aria-label="Verify code"
                                     >
                                         {isVerifying ? (
                                             <>
@@ -430,15 +484,33 @@ export default function ForgotPassword() {
                     </div>
 
                     {/* Right Column - Illustration */}
-                    <div className="relative hidden bg-muted lg:flex items-center justify-center p-8">
-                        <img
-                            src="/images/illustrations/forgot-password.svg"
+                    <div className="relative hidden bg-muted lg:flex flex-col items-center justify-center p-8">
+                        {/* Theme Toggle */}
+                        <div className="absolute top-4 right-4">
+                            <AuthThemeToggle />
+                        </div>
+
+                        <AuthIllustration
+                            name={AuthIllustrations.FORGOT_PASSWORD}
                             alt="Forgot password illustration"
-                            className="max-w-full max-h-80 object-contain"
+                            className="max-h-80"
                         />
                     </div>
                 </div>
             </Card>
+
+            {/* Additional Help Text */}
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+                <p>
+                    Need help? Contact support at{' '}
+                    <a
+                        href="mailto:support@example.com"
+                        className="underline hover:text-primary transition-colors"
+                    >
+                        support@example.com
+                    </a>
+                </p>
+            </div>
         </GuestLayout>
     );
 }
