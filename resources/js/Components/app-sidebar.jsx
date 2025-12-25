@@ -8,6 +8,7 @@ import {
     SettingsIcon,
     HelpCircleIcon,
     SearchIcon,
+    Paintbrush,
 } from "lucide-react";
 
 import { NavMain } from "@/Components/nav-main";
@@ -22,6 +23,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/Components/ui/sidebar";
+import { ThemeCustomizer } from "@/Components/ThemeCustomizer";
 
 export function AppSidebar({ user, ...props }) {
     const { url } = usePage();
@@ -45,6 +47,12 @@ export function AppSidebar({ user, ...props }) {
             },
         ],
         navSecondary: [
+            {
+                title: "Customize",
+                url: "#customize",
+                icon: Paintbrush,
+                isCustomizer: true,
+            },
             {
                 title: "Settings",
                 url: "/settings",

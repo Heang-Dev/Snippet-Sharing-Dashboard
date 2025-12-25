@@ -6,44 +6,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { useState, useEffect } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 /**
  * Theme toggle for unauthenticated pages (login, register, etc.)
- * Saves theme preference to localStorage only (no database)
+ * Now uses the shared ThemeContext for consistency
  */
 export function AuthThemeToggle({ className = "" }) {
-    const [currentTheme, setCurrentTheme] = useState('system');
-
-    // Load current theme from localStorage on mount
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') || 'system';
-        setCurrentTheme(savedTheme);
-        applyTheme(savedTheme);
-    }, []);
-
-    const applyTheme = (theme) => {
-        const root = document.documentElement;
-
-        if (theme === 'dark') {
-            root.classList.add('dark');
-        } else if (theme === 'light') {
-            root.classList.remove('dark');
-        } else {
-            // System preference
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                root.classList.add('dark');
-            } else {
-                root.classList.remove('dark');
-            }
-        }
-    };
-
-    const setTheme = (newTheme) => {
-        localStorage.setItem('theme', newTheme);
-        applyTheme(newTheme);
-        setCurrentTheme(newTheme);
-    };
+    const { mode, setMode } = useTheme();
 
     return (
         <DropdownMenu>
@@ -51,33 +21,33 @@ export function AuthThemeToggle({ className = "" }) {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className={`h-9 w-9 ${className}`}
+                    className={`h-7 w-7 ${className}`}
                 >
-                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <Sun className="h-3.5 w-3.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-3.5 w-3.5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                     <span className="sr-only">Toggle theme</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                    onClick={() => setTheme("light")}
-                    className={currentTheme === 'light' ? 'bg-accent' : ''}
+                    onClick={() => setMode("light")}
+                    className={mode === "light" ? "bg-accent" : ""}
                 >
-                    <Sun className="mr-2 h-4 w-4" />
+                    <Sun className="mr-2 h-3.5 w-3.5" />
                     <span>Light</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    onClick={() => setTheme("dark")}
-                    className={currentTheme === 'dark' ? 'bg-accent' : ''}
+                    onClick={() => setMode("dark")}
+                    className={mode === "dark" ? "bg-accent" : ""}
                 >
-                    <Moon className="mr-2 h-4 w-4" />
+                    <Moon className="mr-2 h-3.5 w-3.5" />
                     <span>Dark</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    onClick={() => setTheme("system")}
-                    className={currentTheme === 'system' ? 'bg-accent' : ''}
+                    onClick={() => setMode("system")}
+                    className={mode === "system" ? "bg-accent" : ""}
                 >
-                    <Monitor className="mr-2 h-4 w-4" />
+                    <Monitor className="mr-2 h-3.5 w-3.5" />
                     <span>System</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

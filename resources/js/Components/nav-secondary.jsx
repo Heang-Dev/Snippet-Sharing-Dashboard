@@ -6,6 +6,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/Components/ui/sidebar";
+import { ThemeCustomizer } from "@/Components/ThemeCustomizer";
 
 export function NavSecondary({ items, ...props }) {
     const { url } = usePage();
@@ -15,7 +16,7 @@ export function NavSecondary({ items, ...props }) {
     };
 
     const isActive = (itemUrl) => {
-        if (!itemUrl || itemUrl === '#') return false;
+        if (!itemUrl || itemUrl === '#' || itemUrl.startsWith('#')) return false;
         const currentUrl = normalizeUrl(url);
         const targetUrl = normalizeUrl(itemUrl);
         return currentUrl.startsWith(targetUrl);
@@ -27,23 +28,32 @@ export function NavSecondary({ items, ...props }) {
                 <SidebarMenu>
                     {items.map((item) => (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton
-                                asChild
-                                isActive={isActive(item.url)}
-                                tooltip={item.title}
-                            >
-                                {item.url && item.url !== '#' ? (
-                                    <Link href={item.url}>
+                            {item.isCustomizer ? (
+                                <ThemeCustomizer side="left">
+                                    <SidebarMenuButton tooltip={item.title}>
                                         <item.icon />
                                         <span>{item.title}</span>
-                                    </Link>
-                                ) : (
-                                    <button type="button">
-                                        <item.icon />
-                                        <span>{item.title}</span>
-                                    </button>
-                                )}
-                            </SidebarMenuButton>
+                                    </SidebarMenuButton>
+                                </ThemeCustomizer>
+                            ) : (
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={isActive(item.url)}
+                                    tooltip={item.title}
+                                >
+                                    {item.url && item.url !== '#' ? (
+                                        <Link href={item.url}>
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </Link>
+                                    ) : (
+                                        <button type="button">
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </button>
+                                    )}
+                                </SidebarMenuButton>
+                            )}
                         </SidebarMenuItem>
                     ))}
                 </SidebarMenu>
