@@ -32,10 +32,10 @@ class DatabaseSeeder extends Seeder
 
         // Create test user
         User::create([
-            'username' => 'testuser',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
-            'full_name' => 'Test User',
+            'username' => 'mengheang',
+            'email' => 'chhunmengheang5@gmail.com',
+            'password' => Hash::make('12345678'),
+            'full_name' => 'Chhun Mengheang',
             'bio' => 'A test user for development purposes.',
             'is_admin' => false,
             'is_active' => true,
