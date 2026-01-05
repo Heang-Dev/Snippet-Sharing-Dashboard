@@ -13,17 +13,24 @@ class SnippetVersion extends Model
 
     protected $fillable = [
         'snippet_id',
-        'user_id',
         'version_number',
+        'title',
+        'description',
         'code',
-        'highlighted_code',
-        'change_description',
+        'language',
+        'change_summary',
+        'change_type',
+        'lines_added',
+        'lines_removed',
+        'created_by',
     ];
 
     protected function casts(): array
     {
         return [
             'version_number' => 'integer',
+            'lines_added' => 'integer',
+            'lines_removed' => 'integer',
         ];
     }
 
@@ -32,8 +39,18 @@ class SnippetVersion extends Model
         return $this->belongsTo(Snippet::class);
     }
 
-    public function user(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function isInitialVersion(): bool
+    {
+        return $this->version_number === 1 || $this->change_type === 'create';
+    }
+
+    public function scopeLatest($query)
+    {
+        return $query->orderBy('version_number', 'desc');
     }
 }

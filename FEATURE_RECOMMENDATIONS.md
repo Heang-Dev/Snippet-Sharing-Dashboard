@@ -82,15 +82,38 @@
 | Authentication | ✅ | ✅ | ✅ |
 | Password Reset (OTP) | ✅ | ✅ | ✅ |
 | User Profile | ✅ | ⚠️ | ⚠️ |
-| Snippets CRUD | ❌ | ⚠️ UI | ❌ |
-| Collections | ❌ | ❌ | ❌ |
-| Comments | ❌ | ❌ | ❌ |
-| Favorites | ❌ | ❌ | ❌ |
-| Tags/Categories | ❌ | ❌ | ❌ |
-| Teams | ❌ | ⚠️ UI | ❌ |
-| Search | ❌ | ⚠️ UI | ❌ |
-| Notifications | ❌ | ❌ | ❌ |
-| Admin Dashboard | ❌ | ❌ | N/A |
+| Snippets CRUD | ✅ | ⚠️ UI | ❌ |
+| Collections | ✅ | ❌ | ❌ |
+| Comments | ✅ | ❌ | ❌ |
+| Favorites | ✅ | ❌ | ❌ |
+| Tags/Categories/Languages | ✅ | ❌ | ❌ |
+| Search | ✅ | ⚠️ UI | ❌ |
+| Teams & Invitations | ✅ | ⚠️ UI | ❌ |
+| Follow/Followers | ✅ | ❌ | ❌ |
+| Notifications | ✅ | ❌ | ❌ |
+| Shares | ✅ | ❌ | ❌ |
+| Snippet Versions | ✅ | ❌ | ❌ |
+| Activity Feed | ✅ | ❌ | ❌ |
+| Admin Dashboard | ✅ | ❌ | N/A |
+
+### API Documentation Files
+
+All API endpoints are fully documented in `docs/api/`:
+
+| Module | Documentation |
+|--------|---------------|
+| Snippets | `SNIPPETS_API.md` |
+| Collections | `COLLECTIONS_API.md` |
+| Comments | `COMMENTS_API.md` |
+| Tags/Categories/Languages | `TAGS_CATEGORIES_LANGUAGES_API.md` |
+| Search | `SEARCH_API.md` |
+| Teams & Invitations | `TEAMS_API.md` |
+| Follow/Followers | `FOLLOWS_API.md` |
+| Notifications | `NOTIFICATIONS_API.md` |
+| Shares | `SHARES_API.md` |
+| Snippet Versions | `VERSIONS_API.md` |
+| Activity Feed | `ACTIVITY_FEED_API.md` |
+| Admin Dashboard | `ADMIN_API.md` |
 
 ---
 

@@ -14,6 +14,11 @@ use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\TeamController;
 use App\Http\Controllers\Api\V1\FollowController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\ShareController;
+use App\Http\Controllers\Api\V1\SnippetVersionController;
+use App\Http\Controllers\Api\V1\ActivityFeedController;
+use App\Http\Controllers\Api\V1\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -195,6 +200,33 @@ Route::prefix('v1')->group(function () {
         // View single snippet (public or accessible)
         Route::get('/{slug}', [SnippetController::class, 'show'])
             ->name('api.snippets.show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Share Access (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/shares/token/{token}', [ShareController::class, 'accessByToken'])
+        ->name('api.shares.access-by-token');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Activity Feed (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('feed')->group(function () {
+        // Public activity feed
+        Route::get('/public', [ActivityFeedController::class, 'publicFeed'])
+            ->name('api.feed.public');
+
+        // Activity types reference
+        Route::get('/types', [ActivityFeedController::class, 'types'])
+            ->name('api.feed.types');
+
+        // User activity (public profile)
+        Route::get('/users/{userId}', [ActivityFeedController::class, 'userActivity'])
+            ->name('api.feed.user');
     });
 
     /*
@@ -496,6 +528,254 @@ Route::prefix('v1')->group(function () {
             // Get mutual followers
             Route::get('/mutual-followers', [FollowController::class, 'mutualFollowers'])
                 ->name('api.users.mutual-followers');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Notification Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('notifications')->group(function () {
+            // Get notification types (public reference)
+            Route::get('/types', [NotificationController::class, 'types'])
+                ->name('api.notifications.types');
+
+            // Get all notifications
+            Route::get('/', [NotificationController::class, 'index'])
+                ->name('api.notifications.index');
+
+            // Get unread count
+            Route::get('/unread-count', [NotificationController::class, 'unreadCount'])
+                ->name('api.notifications.unread-count');
+
+            // Get notification settings
+            Route::get('/settings', [NotificationController::class, 'settings'])
+                ->name('api.notifications.settings');
+
+            // Update notification settings
+            Route::put('/settings', [NotificationController::class, 'updateSettings'])
+                ->name('api.notifications.settings.update');
+
+            // Mark all as read
+            Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])
+                ->name('api.notifications.mark-all-read');
+
+            // Mark multiple as read
+            Route::post('/mark-read', [NotificationController::class, 'markMultipleAsRead'])
+                ->name('api.notifications.mark-read');
+
+            // Delete multiple notifications
+            Route::delete('/batch', [NotificationController::class, 'destroyMultiple'])
+                ->name('api.notifications.destroy-multiple');
+
+            // Delete all read notifications
+            Route::delete('/read', [NotificationController::class, 'destroyAllRead'])
+                ->name('api.notifications.destroy-read');
+
+            // Delete all notifications
+            Route::delete('/all', [NotificationController::class, 'destroyAll'])
+                ->name('api.notifications.destroy-all');
+
+            // Get specific notification
+            Route::get('/{id}', [NotificationController::class, 'show'])
+                ->name('api.notifications.show');
+
+            // Mark as read
+            Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])
+                ->name('api.notifications.read');
+
+            // Mark as unread
+            Route::post('/{id}/unread', [NotificationController::class, 'markAsUnread'])
+                ->name('api.notifications.unread');
+
+            // Delete notification
+            Route::delete('/{id}', [NotificationController::class, 'destroy'])
+                ->name('api.notifications.destroy');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Share Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('shares')->group(function () {
+            // Get snippets shared with me
+            Route::get('/with-me', [ShareController::class, 'sharedWithMe'])
+                ->name('api.shares.with-me');
+
+            // Get snippets I've shared
+            Route::get('/by-me', [ShareController::class, 'sharedByMe'])
+                ->name('api.shares.by-me');
+
+            // Get specific share
+            Route::get('/{id}', [ShareController::class, 'show'])
+                ->name('api.shares.show');
+
+            // Update share
+            Route::put('/{id}', [ShareController::class, 'update'])
+                ->name('api.shares.update');
+
+            Route::patch('/{id}', [ShareController::class, 'update']);
+
+            // Delete share
+            Route::delete('/{id}', [ShareController::class, 'destroy'])
+                ->name('api.shares.destroy');
+
+            // Regenerate share token
+            Route::post('/{id}/regenerate-token', [ShareController::class, 'regenerateToken'])
+                ->name('api.shares.regenerate-token');
+        });
+
+        // Snippet-specific share routes
+        Route::prefix('snippets/{snippetId}/shares')->group(function () {
+            // Get shares for a snippet
+            Route::get('/', [ShareController::class, 'index'])
+                ->name('api.snippets.shares.index');
+
+            // Create share for a snippet
+            Route::post('/', [ShareController::class, 'store'])
+                ->name('api.snippets.shares.store');
+
+            // Revoke all shares for a snippet
+            Route::post('/revoke-all', [ShareController::class, 'revokeAll'])
+                ->name('api.snippets.shares.revoke-all');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Snippet Version Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('snippets/{snippetId}/versions')->group(function () {
+            // Get all versions for a snippet
+            Route::get('/', [SnippetVersionController::class, 'index'])
+                ->name('api.snippets.versions.index');
+
+            // Get version stats
+            Route::get('/stats', [SnippetVersionController::class, 'stats'])
+                ->name('api.snippets.versions.stats');
+
+            // Get latest version
+            Route::get('/latest', [SnippetVersionController::class, 'latest'])
+                ->name('api.snippets.versions.latest');
+
+            // Compare two versions
+            Route::get('/compare', [SnippetVersionController::class, 'compare'])
+                ->name('api.snippets.versions.compare');
+
+            // Get version by number
+            Route::get('/number/{versionNumber}', [SnippetVersionController::class, 'showByNumber'])
+                ->name('api.snippets.versions.show-by-number')
+                ->where('versionNumber', '[0-9]+');
+
+            // Get specific version by ID
+            Route::get('/{versionId}', [SnippetVersionController::class, 'show'])
+                ->name('api.snippets.versions.show');
+
+            // Restore a version
+            Route::post('/{versionId}/restore', [SnippetVersionController::class, 'restore'])
+                ->name('api.snippets.versions.restore');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Activity Feed Routes (Authenticated)
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('feed')->group(function () {
+            // Personalized activity feed
+            Route::get('/', [ActivityFeedController::class, 'index'])
+                ->name('api.feed.index');
+
+            // My activity
+            Route::get('/me', [ActivityFeedController::class, 'myActivity'])
+                ->name('api.feed.me');
+
+            // Activity statistics
+            Route::get('/stats', [ActivityFeedController::class, 'stats'])
+                ->name('api.feed.stats');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Routes (Requires Admin Privileges)
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('admin')->group(function () {
+            // Dashboard overview
+            Route::get('/dashboard', [AdminController::class, 'dashboard'])
+                ->name('api.admin.dashboard');
+
+            // Analytics
+            Route::get('/analytics', [AdminController::class, 'analytics'])
+                ->name('api.admin.analytics');
+
+            // Audit logs
+            Route::get('/audit-logs', [AdminController::class, 'auditLogs'])
+                ->name('api.admin.audit-logs');
+
+            // User management
+            Route::prefix('users')->group(function () {
+                Route::get('/', [AdminController::class, 'users'])
+                    ->name('api.admin.users.index');
+
+                Route::get('/{id}', [AdminController::class, 'showUser'])
+                    ->name('api.admin.users.show');
+
+                Route::put('/{id}', [AdminController::class, 'updateUser'])
+                    ->name('api.admin.users.update');
+
+                Route::patch('/{id}', [AdminController::class, 'updateUser']);
+
+                Route::delete('/{id}', [AdminController::class, 'deleteUser'])
+                    ->name('api.admin.users.destroy');
+            });
+
+            // Snippet management
+            Route::prefix('snippets')->group(function () {
+                Route::get('/', [AdminController::class, 'snippets'])
+                    ->name('api.admin.snippets.index');
+
+                Route::put('/{id}', [AdminController::class, 'updateSnippet'])
+                    ->name('api.admin.snippets.update');
+
+                Route::patch('/{id}', [AdminController::class, 'updateSnippet']);
+
+                Route::delete('/{id}', [AdminController::class, 'deleteSnippet'])
+                    ->name('api.admin.snippets.destroy');
+            });
+
+            // Comment management
+            Route::delete('/comments/{id}', [AdminController::class, 'deleteComment'])
+                ->name('api.admin.comments.destroy');
+
+            // Language management
+            Route::prefix('languages')->group(function () {
+                Route::post('/', [AdminController::class, 'createLanguage'])
+                    ->name('api.admin.languages.store');
+
+                Route::put('/{id}', [AdminController::class, 'updateLanguage'])
+                    ->name('api.admin.languages.update');
+
+                Route::patch('/{id}', [AdminController::class, 'updateLanguage']);
+
+                Route::delete('/{id}', [AdminController::class, 'deleteLanguage'])
+                    ->name('api.admin.languages.destroy');
+            });
+
+            // Category management
+            Route::prefix('categories')->group(function () {
+                Route::post('/', [AdminController::class, 'createCategory'])
+                    ->name('api.admin.categories.store');
+
+                Route::put('/{id}', [AdminController::class, 'updateCategory'])
+                    ->name('api.admin.categories.update');
+
+                Route::patch('/{id}', [AdminController::class, 'updateCategory']);
+
+                Route::delete('/{id}', [AdminController::class, 'deleteCategory'])
+                    ->name('api.admin.categories.destroy');
+            });
         });
 
     });
