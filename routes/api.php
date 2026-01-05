@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Auth\UserController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\LanguageController;
 use App\Http\Controllers\Api\V1\SnippetController;
+use App\Http\Controllers\Api\V1\CollectionController;
 use App\Http\Controllers\Api\V1\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -109,6 +110,22 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/{slug}', [TagController::class, 'show'])
             ->name('api.tags.show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Collections Routes (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('collections')->group(function () {
+        Route::get('/public', [CollectionController::class, 'publicIndex'])
+            ->name('api.collections.public');
+
+        Route::get('/{id}', [CollectionController::class, 'show'])
+            ->name('api.collections.show');
+
+        Route::get('/{id}/snippets', [CollectionController::class, 'snippets'])
+            ->name('api.collections.snippets');
     });
 
     /*
@@ -229,6 +246,43 @@ Route::prefix('v1')->group(function () {
             // Get forks of a snippet
             Route::get('/{id}/forks', [SnippetController::class, 'forks'])
                 ->name('api.snippets.forks');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Collection Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('collections')->group(function () {
+            // List user's collections
+            Route::get('/', [CollectionController::class, 'index'])
+                ->name('api.collections.index');
+
+            // Create collection
+            Route::post('/', [CollectionController::class, 'store'])
+                ->name('api.collections.store');
+
+            // Update collection
+            Route::put('/{id}', [CollectionController::class, 'update'])
+                ->name('api.collections.update');
+
+            Route::patch('/{id}', [CollectionController::class, 'update']);
+
+            // Delete collection
+            Route::delete('/{id}', [CollectionController::class, 'destroy'])
+                ->name('api.collections.destroy');
+
+            // Add snippet to collection
+            Route::post('/{id}/snippets', [CollectionController::class, 'addSnippet'])
+                ->name('api.collections.addSnippet');
+
+            // Remove snippet from collection
+            Route::delete('/{id}/snippets/{snippetId}', [CollectionController::class, 'removeSnippet'])
+                ->name('api.collections.removeSnippet');
+
+            // Reorder snippets in collection
+            Route::put('/{id}/reorder', [CollectionController::class, 'reorderSnippets'])
+                ->name('api.collections.reorder');
         });
 
         /*
