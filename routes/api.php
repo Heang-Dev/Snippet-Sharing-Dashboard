@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\UserController;
+use App\Http\Controllers\Api\V1\SnippetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,6 +55,29 @@ Route::prefix('v1')->group(function () {
         Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
             ->middleware('throttle:5,1')
             ->name('api.password.reset');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Snippet Routes (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('snippets')->group(function () {
+        // Browse public snippets
+        Route::get('/public', [SnippetController::class, 'publicIndex'])
+            ->name('api.snippets.public');
+
+        // Get trending snippets
+        Route::get('/trending', [SnippetController::class, 'trending'])
+            ->name('api.snippets.trending');
+
+        // Get featured snippets
+        Route::get('/featured', [SnippetController::class, 'featured'])
+            ->name('api.snippets.featured');
+
+        // View single snippet (public or accessible)
+        Route::get('/{slug}', [SnippetController::class, 'show'])
+            ->name('api.snippets.show');
     });
 
     /*
@@ -114,12 +138,44 @@ Route::prefix('v1')->group(function () {
 
         /*
         |--------------------------------------------------------------------------
-        | Snippet Routes (To be implemented)
+        | Snippet Routes
         |--------------------------------------------------------------------------
         */
-        // Route::apiResource('snippets', SnippetController::class);
-        // Route::post('/snippets/{snippet}/favorite', [SnippetController::class, 'toggleFavorite']);
-        // Route::post('/snippets/{snippet}/fork', [SnippetController::class, 'fork']);
+        Route::prefix('snippets')->group(function () {
+            // List user's snippets
+            Route::get('/', [SnippetController::class, 'index'])
+                ->name('api.snippets.index');
+
+            // Get user's favorite snippets
+            Route::get('/favorites', [SnippetController::class, 'favorites'])
+                ->name('api.snippets.favorites');
+
+            // Create snippet
+            Route::post('/', [SnippetController::class, 'store'])
+                ->name('api.snippets.store');
+
+            // Update snippet
+            Route::put('/{id}', [SnippetController::class, 'update'])
+                ->name('api.snippets.update');
+
+            Route::patch('/{id}', [SnippetController::class, 'update']);
+
+            // Delete snippet
+            Route::delete('/{id}', [SnippetController::class, 'destroy'])
+                ->name('api.snippets.destroy');
+
+            // Toggle favorite
+            Route::post('/{id}/favorite', [SnippetController::class, 'toggleFavorite'])
+                ->name('api.snippets.favorite');
+
+            // Fork snippet
+            Route::post('/{id}/fork', [SnippetController::class, 'fork'])
+                ->name('api.snippets.fork');
+
+            // Get forks of a snippet
+            Route::get('/{id}/forks', [SnippetController::class, 'forks'])
+                ->name('api.snippets.forks');
+        });
 
         /*
         |--------------------------------------------------------------------------
