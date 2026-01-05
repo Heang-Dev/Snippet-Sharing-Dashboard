@@ -5,7 +5,10 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\UserController;
+use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\LanguageController;
 use App\Http\Controllers\Api\V1\SnippetController;
+use App\Http\Controllers\Api\V1\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +58,57 @@ Route::prefix('v1')->group(function () {
         Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
             ->middleware('throttle:5,1')
             ->name('api.password.reset');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Languages Routes (Public)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('languages')->group(function () {
+        Route::get('/', [LanguageController::class, 'index'])
+            ->name('api.languages.index');
+
+        Route::get('/popular', [LanguageController::class, 'popular'])
+            ->name('api.languages.popular');
+
+        Route::get('/{slug}', [LanguageController::class, 'show'])
+            ->name('api.languages.show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Categories Routes (Public)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])
+            ->name('api.categories.index');
+
+        Route::get('/tree', [CategoryController::class, 'tree'])
+            ->name('api.categories.tree');
+
+        Route::get('/{slug}', [CategoryController::class, 'show'])
+            ->name('api.categories.show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tags Routes (Public)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('tags')->group(function () {
+        Route::get('/', [TagController::class, 'index'])
+            ->name('api.tags.index');
+
+        Route::get('/popular', [TagController::class, 'popular'])
+            ->name('api.tags.popular');
+
+        Route::get('/search', [TagController::class, 'search'])
+            ->name('api.tags.search');
+
+        Route::get('/{slug}', [TagController::class, 'show'])
+            ->name('api.tags.show');
     });
 
     /*
