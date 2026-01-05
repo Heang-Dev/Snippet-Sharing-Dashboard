@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\LanguageController;
 use App\Http\Controllers\Api\V1\SnippetController;
 use App\Http\Controllers\Api\V1\CollectionController;
+use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +128,25 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}/snippets', [CollectionController::class, 'snippets'])
             ->name('api.collections.snippets');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Comments Routes (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('comments')->group(function () {
+        // Get comment by ID
+        Route::get('/{id}', [CommentController::class, 'show'])
+            ->name('api.comments.show');
+
+        // Get replies to a comment
+        Route::get('/{id}/replies', [CommentController::class, 'replies'])
+            ->name('api.comments.replies');
+    });
+
+    // Get comments for a snippet (public)
+    Route::get('/snippets/{snippetId}/comments', [CommentController::class, 'index'])
+        ->name('api.snippets.comments');
 
     /*
     |--------------------------------------------------------------------------
@@ -284,6 +304,31 @@ Route::prefix('v1')->group(function () {
             Route::put('/{id}/reorder', [CollectionController::class, 'reorderSnippets'])
                 ->name('api.collections.reorder');
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Comment Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('comments')->group(function () {
+            // Get user's comments
+            Route::get('/me', [CommentController::class, 'userComments'])
+                ->name('api.comments.me');
+
+            // Update comment
+            Route::put('/{id}', [CommentController::class, 'update'])
+                ->name('api.comments.update');
+
+            Route::patch('/{id}', [CommentController::class, 'update']);
+
+            // Delete comment
+            Route::delete('/{id}', [CommentController::class, 'destroy'])
+                ->name('api.comments.destroy');
+        });
+
+        // Create comment on snippet
+        Route::post('/snippets/{snippetId}/comments', [CommentController::class, 'store'])
+            ->name('api.snippets.comments.store');
 
         /*
         |--------------------------------------------------------------------------
