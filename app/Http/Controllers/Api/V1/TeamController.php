@@ -22,8 +22,7 @@ class TeamController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        $user = User::find(Auth::id());
 
         // Get owned teams
         $ownedTeams = Team::where('owner_id', $user->id)
