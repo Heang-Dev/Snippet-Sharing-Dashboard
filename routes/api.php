@@ -440,6 +440,64 @@ Route::prefix('v1')->group(function () {
                 ->name('api.invitations.decline');
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Follow Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('follows')->group(function () {
+            // Get my followers
+            Route::get('/followers', [FollowController::class, 'myFollowers'])
+                ->name('api.follows.my-followers');
+
+            // Get users I'm following
+            Route::get('/following', [FollowController::class, 'myFollowing'])
+                ->name('api.follows.my-following');
+
+            // Get follow suggestions
+            Route::get('/suggestions', [FollowController::class, 'suggestions'])
+                ->name('api.follows.suggestions');
+        });
+
+        // User-specific follow routes
+        Route::prefix('users/{userId}')->group(function () {
+            // Follow a user
+            Route::post('/follow', [FollowController::class, 'follow'])
+                ->name('api.users.follow');
+
+            // Unfollow a user
+            Route::delete('/follow', [FollowController::class, 'unfollow'])
+                ->name('api.users.unfollow');
+
+            // Toggle follow status
+            Route::post('/follow/toggle', [FollowController::class, 'toggle'])
+                ->name('api.users.follow.toggle');
+
+            // Check follow status
+            Route::get('/follow/check', [FollowController::class, 'check'])
+                ->name('api.users.follow.check');
+
+            // Get user's followers
+            Route::get('/followers', [FollowController::class, 'followers'])
+                ->name('api.users.followers');
+
+            // Get users that user is following
+            Route::get('/following', [FollowController::class, 'following'])
+                ->name('api.users.following');
+
+            // Get follow stats
+            Route::get('/follow/stats', [FollowController::class, 'stats'])
+                ->name('api.users.follow.stats');
+
+            // Update notification settings for follow
+            Route::put('/follow/notifications', [FollowController::class, 'updateNotificationSettings'])
+                ->name('api.users.follow.notifications');
+
+            // Get mutual followers
+            Route::get('/mutual-followers', [FollowController::class, 'mutualFollowers'])
+                ->name('api.users.mutual-followers');
+        });
+
     });
 });
 
