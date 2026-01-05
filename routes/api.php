@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\V1\CollectionController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\TagController;
+use App\Http\Controllers\Api\V1\TeamController;
+use App\Http\Controllers\Api\V1\FollowController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -356,12 +358,87 @@ Route::prefix('v1')->group(function () {
 
         /*
         |--------------------------------------------------------------------------
-        | Team Routes (To be implemented)
+        | Team Routes
         |--------------------------------------------------------------------------
         */
-        // Route::apiResource('teams', TeamController::class);
-        // Route::post('/teams/{team}/invite', [TeamController::class, 'invite']);
-        // Route::post('/teams/{team}/leave', [TeamController::class, 'leave']);
+        Route::prefix('teams')->group(function () {
+            // List user's teams
+            Route::get('/', [TeamController::class, 'index'])
+                ->name('api.teams.index');
+
+            // Create team
+            Route::post('/', [TeamController::class, 'store'])
+                ->name('api.teams.store');
+
+            // Get team details
+            Route::get('/{id}', [TeamController::class, 'show'])
+                ->name('api.teams.show');
+
+            // Update team
+            Route::put('/{id}', [TeamController::class, 'update'])
+                ->name('api.teams.update');
+
+            Route::patch('/{id}', [TeamController::class, 'update']);
+
+            // Delete team
+            Route::delete('/{id}', [TeamController::class, 'destroy'])
+                ->name('api.teams.destroy');
+
+            // Get team members
+            Route::get('/{id}/members', [TeamController::class, 'members'])
+                ->name('api.teams.members');
+
+            // Update member role
+            Route::put('/{id}/members/{memberId}', [TeamController::class, 'updateMemberRole'])
+                ->name('api.teams.members.update');
+
+            // Remove member
+            Route::delete('/{id}/members/{memberId}', [TeamController::class, 'removeMember'])
+                ->name('api.teams.members.remove');
+
+            // Get team snippets
+            Route::get('/{id}/snippets', [TeamController::class, 'snippets'])
+                ->name('api.teams.snippets');
+
+            // Invite member
+            Route::post('/{id}/invite', [TeamController::class, 'invite'])
+                ->name('api.teams.invite');
+
+            // Get team invitations (owner/admin only)
+            Route::get('/{id}/invitations', [TeamController::class, 'invitations'])
+                ->name('api.teams.invitations');
+
+            // Cancel invitation
+            Route::delete('/{id}/invitations/{invitationId}', [TeamController::class, 'cancelInvitation'])
+                ->name('api.teams.invitations.cancel');
+
+            // Leave team
+            Route::post('/{id}/leave', [TeamController::class, 'leave'])
+                ->name('api.teams.leave');
+
+            // Transfer ownership
+            Route::post('/{id}/transfer', [TeamController::class, 'transferOwnership'])
+                ->name('api.teams.transfer');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Team Invitation Routes (User's invitations)
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('invitations')->group(function () {
+            // Get my pending invitations
+            Route::get('/', [TeamController::class, 'myInvitations'])
+                ->name('api.invitations.index');
+
+            // Accept invitation
+            Route::post('/{invitationId}/accept', [TeamController::class, 'acceptInvitation'])
+                ->name('api.invitations.accept');
+
+            // Decline invitation
+            Route::post('/{invitationId}/decline', [TeamController::class, 'declineInvitation'])
+                ->name('api.invitations.decline');
+        });
 
     });
 });
