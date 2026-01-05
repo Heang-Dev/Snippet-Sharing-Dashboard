@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\LanguageController;
 use App\Http\Controllers\Api\V1\SnippetController;
 use App\Http\Controllers\Api\V1\CollectionController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -147,6 +148,29 @@ Route::prefix('v1')->group(function () {
     // Get comments for a snippet (public)
     Route::get('/snippets/{snippetId}/comments', [CommentController::class, 'index'])
         ->name('api.snippets.comments');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Search Routes (Public)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('search')->group(function () {
+        // Global search
+        Route::get('/', [SearchController::class, 'index'])
+            ->name('api.search');
+
+        // Search snippets with advanced filters
+        Route::get('/snippets', [SearchController::class, 'snippets'])
+            ->name('api.search.snippets');
+
+        // Search users
+        Route::get('/users', [SearchController::class, 'users'])
+            ->name('api.search.users');
+
+        // Autocomplete/suggestions
+        Route::get('/autocomplete', [SearchController::class, 'autocomplete'])
+            ->name('api.search.autocomplete');
+    });
 
     /*
     |--------------------------------------------------------------------------
