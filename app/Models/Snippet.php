@@ -27,7 +27,7 @@ class Snippet extends Model
         'code',
         'highlighted_code',
         'file_name',
-        'visibility',
+        'privacy',
         'password_hash',
         'expires_at',
         'views_count',
@@ -143,17 +143,17 @@ class Snippet extends Model
 
     public function scopePublic($query)
     {
-        return $query->where('visibility', 'public');
+        return $query->where('privacy', 'public');
     }
 
     public function scopePrivate($query)
     {
-        return $query->where('visibility', 'private');
+        return $query->where('privacy', 'private');
     }
 
     public function scopeTeamVisible($query)
     {
-        return $query->where('visibility', 'team');
+        return $query->where('privacy', 'team');
     }
 
     public function scopeNotExpired($query)
@@ -167,7 +167,7 @@ class Snippet extends Model
     public function scopeVisible($query, ?User $user = null)
     {
         return $query->where(function ($q) use ($user) {
-            $q->where('visibility', 'public');
+            $q->where('privacy', 'public');
 
             if ($user) {
                 $q->orWhere('user_id', $user->id);
@@ -175,7 +175,7 @@ class Snippet extends Model
                 $teamIds = $user->teams()->pluck('teams.id');
                 if ($teamIds->isNotEmpty()) {
                     $q->orWhere(function ($teamQuery) use ($teamIds) {
-                        $teamQuery->where('visibility', 'team')
+                        $teamQuery->where('privacy', 'team')
                             ->whereIn('team_id', $teamIds);
                     });
                 }
@@ -185,17 +185,17 @@ class Snippet extends Model
 
     public function isPublic(): bool
     {
-        return $this->visibility === 'public';
+        return $this->privacy === 'public';
     }
 
     public function isPrivate(): bool
     {
-        return $this->visibility === 'private';
+        return $this->privacy === 'private';
     }
 
     public function isTeamVisible(): bool
     {
-        return $this->visibility === 'team';
+        return $this->privacy === 'team';
     }
 
     public function isExpired(): bool

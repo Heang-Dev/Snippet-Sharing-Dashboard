@@ -32,9 +32,9 @@ class CollectionController extends Controller
             });
         }
 
-        // Filter by visibility
-        if ($request->has('visibility') && in_array($request->visibility, ['public', 'private'])) {
-            $query->where('visibility', $request->visibility);
+        // Filter by privacy
+        if ($request->has('privacy') && in_array($request->privacy, ['public', 'private'])) {
+            $query->where('privacy', $request->privacy);
         }
 
         // Sort
@@ -126,7 +126,7 @@ class CollectionController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'visibility' => 'required|in:public,private',
+            'privacy' => 'required|in:public,private',
         ]);
 
         if ($validator->fails()) {
@@ -141,8 +141,8 @@ class CollectionController extends Controller
             'user_id' => Auth::id(),
             'name' => $request->name,
             'description' => $request->description,
-            'visibility' => $request->visibility,
-            'snippets_count' => 0,
+            'privacy' => $request->privacy,
+            'snippet_count' => 0,
         ]);
 
         return response()->json([
@@ -172,7 +172,7 @@ class CollectionController extends Controller
             ], 404);
         }
 
-        // Check visibility permissions
+        // Check privacy permissions
         $user = Auth::user();
         if (!$collection->isPublic() && (!$user || !$collection->isOwnedBy($user))) {
             return response()->json([
@@ -185,7 +185,7 @@ class CollectionController extends Controller
         if ($request->has('with_snippets') && $request->boolean('with_snippets')) {
             $collection->load(['snippets' => function ($q) {
                 $q->with(['user:id,username,full_name,avatar_url', 'language:id,name,slug,display_name,color'])
-                    ->select(['snippets.id', 'snippets.title', 'snippets.slug', 'snippets.description', 'snippets.user_id', 'snippets.language_id', 'snippets.visibility', 'snippets.view_count', 'snippets.created_at']);
+                    ->select(['snippets.id', 'snippets.title', 'snippets.slug', 'snippets.description', 'snippets.user_id', 'snippets.language_id', 'snippets.privacy', 'snippets.views_count', 'snippets.created_at']);
             }]);
         }
 
@@ -225,7 +225,7 @@ class CollectionController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'visibility' => 'sometimes|required|in:public,private',
+            'privacy' => 'sometimes|required|in:public,private',
         ]);
 
         if ($validator->fails()) {
@@ -236,7 +236,7 @@ class CollectionController extends Controller
             ], 422);
         }
 
-        $collection->update($request->only(['name', 'description', 'visibility']));
+        $collection->update($request->only(['name', 'description', 'privacy']));
 
         return response()->json([
             'success' => true,
@@ -468,7 +468,7 @@ class CollectionController extends Controller
             ], 404);
         }
 
-        // Check visibility permissions
+        // Check privacy permissions
         $user = Auth::user();
         if (!$collection->isPublic() && (!$user || !$collection->isOwnedBy($user))) {
             return response()->json([

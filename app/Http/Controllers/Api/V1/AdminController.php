@@ -53,14 +53,14 @@ class AdminController extends Controller
             ],
             'snippets' => [
                 'total' => Snippet::count(),
-                'public' => Snippet::where('visibility', 'public')->count(),
-                'private' => Snippet::where('visibility', 'private')->count(),
+                'public' => Snippet::where('privacy', 'public')->count(),
+                'private' => Snippet::where('privacy', 'private')->count(),
                 'new_this_week' => Snippet::where('created_at', '>=', now()->subWeek())->count(),
                 'new_this_month' => Snippet::where('created_at', '>=', now()->subMonth())->count(),
             ],
             'collections' => [
                 'total' => Collection::count(),
-                'public' => Collection::where('is_public', true)->count(),
+                'public' => Collection::where('privacy', 'public')->count(),
             ],
             'comments' => [
                 'total' => Comment::count(),
@@ -169,7 +169,7 @@ class AdminController extends Controller
         $recentSnippets = Snippet::where('user_id', $id)
             ->orderBy('created_at', 'desc')
             ->limit(5)
-            ->get(['id', 'title', 'slug', 'visibility', 'created_at']);
+            ->get(['id', 'title', 'slug', 'privacy', 'created_at']);
 
         $recentComments = Comment::where('user_id', $id)
             ->with('snippet:id,title,slug')
@@ -305,9 +305,9 @@ class AdminController extends Controller
             });
         }
 
-        // Filter by visibility
-        if ($request->has('visibility')) {
-            $query->where('visibility', $request->get('visibility'));
+        // Filter by privacy
+        if ($request->has('privacy')) {
+            $query->where('privacy', $request->get('privacy'));
         }
 
         // Filter by user
@@ -371,7 +371,7 @@ class AdminController extends Controller
 
         $validator = Validator::make($request->all(), [
             'is_featured' => 'sometimes|boolean',
-            'visibility' => 'sometimes|in:public,private,unlisted',
+            'privacy' => 'sometimes|in:public,private,unlisted',
         ]);
 
         if ($validator->fails()) {
@@ -382,11 +382,11 @@ class AdminController extends Controller
             ], 422);
         }
 
-        $oldValues = $snippet->only(['is_featured', 'visibility']);
-        $snippet->update($request->only(['is_featured', 'visibility']));
+        $oldValues = $snippet->only(['is_featured', 'privacy']);
+        $snippet->update($request->only(['is_featured', 'privacy']));
 
         // Log the action
-        AuditLog::log('snippet_updated', 'snippet', $snippet->id, $oldValues, $request->only(['is_featured', 'visibility']), [
+        AuditLog::log('snippet_updated', 'snippet', $snippet->id, $oldValues, $request->only(['is_featured', 'privacy']), [
             'admin_id' => Auth::id(),
         ]);
 

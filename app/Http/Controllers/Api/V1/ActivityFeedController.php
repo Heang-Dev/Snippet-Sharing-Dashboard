@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\AuditLog;
 use App\Models\Comment;
 use App\Models\Snippet;
 use App\Models\User;
@@ -50,7 +49,7 @@ class ActivityFeedController extends Controller
 
         // Get recent snippets from followed users
         $recentSnippets = Snippet::whereIn('user_id', $followingIds)
-            ->where('visibility', 'public')
+            ->where('privacy', 'public')
             ->with(['user:id,username,full_name,avatar_url', 'language:id,name,slug'])
             ->orderBy('created_at', 'desc')
             ->limit(50)
@@ -78,7 +77,7 @@ class ActivityFeedController extends Controller
         // Get recent comments on public snippets from followed users
         $recentComments = Comment::whereIn('user_id', $followingIds)
             ->whereHas('snippet', function ($q) {
-                $q->where('visibility', 'public');
+                $q->where('privacy', 'public');
             })
             ->with([
                 'user:id,username,full_name,avatar_url',
@@ -159,7 +158,7 @@ class ActivityFeedController extends Controller
         $activities = collect();
 
         // Get trending public snippets
-        $trendingSnippets = Snippet::where('visibility', 'public')
+        $trendingSnippets = Snippet::where('privacy', 'public')
             ->with(['user:id,username,full_name,avatar_url', 'language:id,name,slug'])
             ->withCount(['favorites', 'comments', 'forks'])
             ->orderByRaw('(favorites_count * 3 + comments_count * 2 + forks_count) DESC')
@@ -190,7 +189,7 @@ class ActivityFeedController extends Controller
         $activities = $activities->merge($trendingSnippets);
 
         // Get recent public snippets
-        $recentSnippets = Snippet::where('visibility', 'public')
+        $recentSnippets = Snippet::where('privacy', 'public')
             ->with(['user:id,username,full_name,avatar_url', 'language:id,name,slug'])
             ->orderBy('created_at', 'desc')
             ->limit(30)
@@ -259,7 +258,7 @@ class ActivityFeedController extends Controller
 
         // Get user's public snippets
         $userSnippets = Snippet::where('user_id', $userId)
-            ->where('visibility', 'public')
+            ->where('privacy', 'public')
             ->with(['language:id,name,slug'])
             ->orderBy('created_at', 'desc')
             ->limit(50)
@@ -292,7 +291,7 @@ class ActivityFeedController extends Controller
         // Get user's comments on public snippets
         $userComments = Comment::where('user_id', $userId)
             ->whereHas('snippet', function ($q) {
-                $q->where('visibility', 'public');
+                $q->where('privacy', 'public');
             })
             ->with(['snippet:id,title,slug'])
             ->whereNull('parent_id')

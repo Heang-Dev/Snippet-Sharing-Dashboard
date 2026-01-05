@@ -148,7 +148,7 @@ class CommentController extends Controller
      */
     public function show(Request $request, string $id): JsonResponse
     {
-        $query = Comment::with(['user:id,username,full_name,avatar_url', 'snippet:id,title,slug,user_id,visibility']);
+        $query = Comment::with(['user:id,username,full_name,avatar_url', 'snippet:id,title,slug,user_id,privacy']);
 
         // Include replies if requested
         if ($request->has('with_replies') && $request->boolean('with_replies')) {
@@ -167,7 +167,7 @@ class CommentController extends Controller
             ], 404);
         }
 
-        // Check visibility of the snippet
+        // Check privacy of the snippet
         $user = Auth::user();
         $snippet = $comment->snippet;
         if (!$snippet->isPublic() && (!$user || !$snippet->isOwnedBy($user))) {
@@ -295,7 +295,7 @@ class CommentController extends Controller
             ], 404);
         }
 
-        // Check visibility of the snippet
+        // Check privacy of the snippet
         $user = Auth::user();
         $snippet = $comment->snippet;
         if (!$snippet->isPublic() && (!$user || !$snippet->isOwnedBy($user))) {
@@ -336,7 +336,7 @@ class CommentController extends Controller
     {
         $query = Comment::where('user_id', Auth::id())
             ->with([
-                'snippet:id,title,slug,user_id,visibility',
+                'snippet:id,title,slug,user_id,privacy',
                 'parent:id,content,user_id',
             ]);
 

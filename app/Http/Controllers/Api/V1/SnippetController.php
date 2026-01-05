@@ -26,9 +26,9 @@ class SnippetController extends Controller
         $query = Snippet::where('user_id', $user->id)
             ->with(['language', 'category', 'tags', 'user:id,username,full_name,avatar_url']);
 
-        // Filter by visibility
-        if ($request->has('visibility') && in_array($request->visibility, ['public', 'private', 'team', 'unlisted'])) {
-            $query->where('visibility', $request->visibility);
+        // Filter by privacy
+        if ($request->has('privacy') && in_array($request->privacy, ['public', 'private', 'team', 'unlisted'])) {
+            $query->where('privacy', $request->privacy);
         }
 
         // Filter by language
@@ -241,7 +241,7 @@ class SnippetController extends Controller
             'code' => 'required|string|max:1000000', // ~1MB of code
             'language_id' => 'nullable|uuid|exists:languages,id',
             'category_id' => 'nullable|uuid|exists:categories,id',
-            'visibility' => ['required', Rule::in(['public', 'private', 'team', 'unlisted'])],
+            'privacy' => ['required', Rule::in(['public', 'private', 'team', 'unlisted'])],
             'file_name' => 'nullable|string|max:255',
             'tags' => 'nullable|array|max:10',
             'tags.*' => 'string|max:50',
@@ -259,12 +259,12 @@ class SnippetController extends Controller
 
         $user = $request->user();
 
-        // If team visibility, validate team membership
-        if ($request->visibility === 'team') {
+        // If team privacy, validate team membership
+        if ($request->privacy === 'team') {
             if (!$request->team_id) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Team ID is required for team visibility.',
+                    'message' => 'Team ID is required for team privacy.',
                 ], 422);
             }
 
@@ -288,10 +288,10 @@ class SnippetController extends Controller
                 'code' => $request->code,
                 'language_id' => $request->language_id,
                 'category_id' => $request->category_id,
-                'visibility' => $request->visibility,
+                'privacy' => $request->privacy,
                 'file_name' => $request->file_name,
                 'expires_at' => $request->expires_at,
-                'team_id' => $request->visibility === 'team' ? $request->team_id : null,
+                'team_id' => $request->privacy === 'team' ? $request->team_id : null,
                 'version' => 1,
             ]);
 
@@ -431,7 +431,7 @@ class SnippetController extends Controller
             'code' => 'sometimes|required|string|max:1000000',
             'language_id' => 'nullable|uuid|exists:languages,id',
             'category_id' => 'nullable|uuid|exists:categories,id',
-            'visibility' => ['sometimes', Rule::in(['public', 'private', 'team', 'unlisted'])],
+            'privacy' => ['sometimes', Rule::in(['public', 'private', 'team', 'unlisted'])],
             'file_name' => 'nullable|string|max:255',
             'tags' => 'nullable|array|max:10',
             'tags.*' => 'string|max:50',
@@ -448,13 +448,13 @@ class SnippetController extends Controller
             ], 422);
         }
 
-        // If changing to team visibility, validate team membership
-        if ($request->has('visibility') && $request->visibility === 'team') {
+        // If changing to team privacy, validate team membership
+        if ($request->has('privacy') && $request->privacy === 'team') {
             $teamId = $request->team_id ?? $snippet->team_id;
             if (!$teamId) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Team ID is required for team visibility.',
+                    'message' => 'Team ID is required for team privacy.',
                 ], 422);
             }
 
@@ -476,7 +476,7 @@ class SnippetController extends Controller
             // Update snippet fields
             $updateData = [];
             $fillableFields = ['title', 'description', 'code', 'language_id', 'category_id',
-                              'visibility', 'file_name', 'expires_at', 'is_pinned'];
+                              'privacy', 'file_name', 'expires_at', 'is_pinned'];
 
             foreach ($fillableFields as $field) {
                 if ($request->has($field)) {
@@ -484,9 +484,9 @@ class SnippetController extends Controller
                 }
             }
 
-            // Handle team_id based on visibility
-            if ($request->has('visibility')) {
-                $updateData['team_id'] = $request->visibility === 'team' ? ($request->team_id ?? $snippet->team_id) : null;
+            // Handle team_id based on privacy
+            if ($request->has('privacy')) {
+                $updateData['team_id'] = $request->privacy === 'team' ? ($request->team_id ?? $snippet->team_id) : null;
             }
 
             // Increment version if code changed
@@ -732,7 +732,7 @@ class SnippetController extends Controller
                 'code' => $originalSnippet->code,
                 'language_id' => $originalSnippet->language_id,
                 'category_id' => $originalSnippet->category_id,
-                'visibility' => 'private', // Forks start as private
+                'privacy' => 'private', // Forks start as private
                 'file_name' => $originalSnippet->file_name,
                 'forked_from_id' => $originalSnippet->id,
                 'version' => 1,

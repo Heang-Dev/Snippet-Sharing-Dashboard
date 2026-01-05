@@ -35,8 +35,8 @@ class SnippetController extends Controller
             $query->where('language_id', $request->language);
         }
 
-        if ($request->filled('visibility')) {
-            $query->where('visibility', $request->visibility);
+        if ($request->filled('privacy')) {
+            $query->where('privacy', $request->privacy);
         }
 
         if ($request->filled('category')) {
@@ -57,7 +57,7 @@ class SnippetController extends Controller
             'snippets' => $snippets,
             'languages' => $languages,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'language', 'visibility', 'category', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'language', 'privacy', 'category', 'sort', 'direction']),
         ]);
     }
 
@@ -80,8 +80,8 @@ class SnippetController extends Controller
             'code' => ['required', 'string', 'max:100000'],
             'language_id' => ['required', 'uuid', 'exists:languages,id'],
             'category_id' => ['nullable', 'uuid', 'exists:categories,id'],
-            'visibility' => ['required', 'in:public,private,team'],
-            'team_id' => ['nullable', 'uuid', 'exists:teams,id', 'required_if:visibility,team'],
+            'privacy' => ['required', 'in:public,private,team'],
+            'team_id' => ['nullable', 'uuid', 'exists:teams,id', 'required_if:privacy,team'],
             'file_name' => ['nullable', 'string', 'max:255'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
@@ -95,7 +95,7 @@ class SnippetController extends Controller
             'code' => $validated['code'],
             'language_id' => $validated['language_id'],
             'category_id' => $validated['category_id'] ?? null,
-            'visibility' => $validated['visibility'],
+            'privacy' => $validated['privacy'],
             'team_id' => $validated['team_id'] ?? null,
             'file_name' => $validated['file_name'] ?? null,
             'expires_at' => $validated['expires_at'] ?? null,
@@ -192,8 +192,8 @@ class SnippetController extends Controller
             'code' => ['required', 'string', 'max:100000'],
             'language_id' => ['required', 'uuid', 'exists:languages,id'],
             'category_id' => ['nullable', 'uuid', 'exists:categories,id'],
-            'visibility' => ['required', 'in:public,private,team'],
-            'team_id' => ['nullable', 'uuid', 'exists:teams,id', 'required_if:visibility,team'],
+            'privacy' => ['required', 'in:public,private,team'],
+            'team_id' => ['nullable', 'uuid', 'exists:teams,id', 'required_if:privacy,team'],
             'file_name' => ['nullable', 'string', 'max:255'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
@@ -221,7 +221,7 @@ class SnippetController extends Controller
             'code' => $validated['code'],
             'language_id' => $validated['language_id'],
             'category_id' => $validated['category_id'] ?? null,
-            'visibility' => $validated['visibility'],
+            'privacy' => $validated['privacy'],
             'team_id' => $validated['team_id'] ?? null,
             'file_name' => $validated['file_name'] ?? null,
             'expires_at' => $validated['expires_at'] ?? null,
@@ -316,7 +316,7 @@ class SnippetController extends Controller
             'code' => $snippet->code,
             'language_id' => $snippet->language_id,
             'category_id' => $snippet->category_id,
-            'visibility' => 'private', // Default to private for forks
+            'privacy' => 'private', // Default to private for forks
             'forked_from_id' => $snippet->id,
             'version' => 1,
         ]);

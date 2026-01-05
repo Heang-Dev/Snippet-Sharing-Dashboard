@@ -93,7 +93,7 @@ class SearchController extends Controller
                 'language:id,name,slug,display_name,color',
                 'tags:id,name,slug,color',
             ])
-            ->where('visibility', 'public');
+            ->where('privacy', 'public');
 
         // Text search
         if (!empty($query)) {
@@ -228,7 +228,7 @@ class SearchController extends Controller
                     ->orWhere('bio', 'like', "%{$query}%");
             })
             ->withCount(['snippets' => function ($q) {
-                $q->where('visibility', 'public');
+                $q->where('privacy', 'public');
             }])
             ->select(['id', 'username', 'full_name', 'bio', 'avatar_url', 'created_at']);
 
@@ -294,7 +294,7 @@ class SearchController extends Controller
         $suggestions = [];
 
         // Snippet titles
-        $snippetTitles = Snippet::where('visibility', 'public')
+        $snippetTitles = Snippet::where('privacy', 'public')
             ->where('title', 'like', "{$query}%")
             ->limit($limit)
             ->pluck('title')
@@ -354,7 +354,7 @@ class SearchController extends Controller
      */
     private function searchSnippets(string $query, int $limit): array
     {
-        return Snippet::where('visibility', 'public')
+        return Snippet::where('privacy', 'public')
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
                     ->orWhere('description', 'like', "%{$query}%");
@@ -388,7 +388,7 @@ class SearchController extends Controller
      */
     private function searchCollections(string $query, int $limit): array
     {
-        return Collection::where('visibility', 'public')
+        return Collection::where('privacy', 'public')
             ->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
                     ->orWhere('description', 'like', "%{$query}%");

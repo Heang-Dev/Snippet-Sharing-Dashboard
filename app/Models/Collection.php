@@ -20,14 +20,14 @@ class Collection extends Model
         'name',
         'slug',
         'description',
-        'visibility',
-        'snippets_count',
+        'privacy',
+        'snippet_count',
     ];
 
     protected function casts(): array
     {
         return [
-            'snippets_count' => 'integer',
+            'snippet_count' => 'integer',
         ];
     }
 
@@ -58,23 +58,23 @@ class Collection extends Model
 
     public function isPublic(): bool
     {
-        return $this->visibility === 'public';
+        return $this->privacy === 'public';
     }
 
     public function isPrivate(): bool
     {
-        return $this->visibility === 'private';
+        return $this->privacy === 'private';
     }
 
     public function scopePublic($query)
     {
-        return $query->where('visibility', 'public');
+        return $query->where('privacy', 'public');
     }
 
     public function scopeVisible($query, ?User $user = null)
     {
         return $query->where(function ($q) use ($user) {
-            $q->where('visibility', 'public');
+            $q->where('privacy', 'public');
 
             if ($user) {
                 $q->orWhere('user_id', $user->id);

@@ -15,8 +15,8 @@ class DashboardController extends Controller
 
         $stats = [
             'total_snippets' => Snippet::where('user_id', $user->id)->count(),
-            'public_snippets' => Snippet::where('user_id', $user->id)->where('visibility', 'public')->count(),
-            'private_snippets' => Snippet::where('user_id', $user->id)->where('visibility', 'private')->count(),
+            'public_snippets' => Snippet::where('user_id', $user->id)->where('privacy', 'public')->count(),
+            'private_snippets' => Snippet::where('user_id', $user->id)->where('privacy', 'private')->count(),
             'total_views' => Snippet::where('user_id', $user->id)->sum('views_count'),
             'total_favorites' => Snippet::where('user_id', $user->id)->sum('favorites_count'),
             'followers_count' => $user->followers()->count(),
