@@ -46,9 +46,9 @@ class Collection extends Model
     public function snippets(): BelongsToMany
     {
         return $this->belongsToMany(Snippet::class, 'collection_snippet')
-            ->withPivot('sort_order')
-            ->withTimestamps()
-            ->orderBy('collection_snippet.sort_order');
+            ->using(CollectionSnippet::class)
+            ->withPivot('position', 'note')
+            ->orderBy('collection_snippet.position');
     }
 
     public function isOwnedBy(User $user): bool

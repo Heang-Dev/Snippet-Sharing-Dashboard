@@ -22,6 +22,7 @@ class TeamController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Get owned teams

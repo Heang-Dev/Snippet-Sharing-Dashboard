@@ -110,6 +110,7 @@ class Snippet extends Model
     public function favoritedBy(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites')
+            ->using(Favorite::class)
             ->withTimestamps();
     }
 
@@ -126,8 +127,8 @@ class Snippet extends Model
     public function collections(): BelongsToMany
     {
         return $this->belongsToMany(Collection::class, 'collection_snippet')
-            ->withPivot('sort_order')
-            ->withTimestamps();
+            ->using(CollectionSnippet::class)
+            ->withPivot('position', 'note');
     }
 
     public function views(): HasMany

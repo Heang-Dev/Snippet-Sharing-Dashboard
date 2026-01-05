@@ -77,7 +77,7 @@ class AuditLog extends Model
         ?array $metadata = null
     ): self {
         return self::create([
-            'user_id' => auth()->id(),
+            'user_id' => auth()->user()?->id,
             'action' => $action,
             'resource_type' => $resourceType,
             'resource_id' => $resourceId,

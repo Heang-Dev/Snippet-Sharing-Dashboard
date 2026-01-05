@@ -61,6 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'team_members')
+            ->using(TeamMember::class)
             ->withPivot('role')
             ->withTimestamps();
     }
@@ -73,6 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(Snippet::class, 'favorites')
+            ->using(Favorite::class)
             ->withTimestamps();
     }
 
@@ -89,12 +91,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')
+            ->using(Follow::class)
             ->withTimestamps();
     }
 
     public function following(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')
+            ->using(Follow::class)
             ->withTimestamps();
     }
 

@@ -2,44 +2,54 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
+    /**
+     * Seed the application's database.
+     *
+     * Run: php artisan db:seed
+     * Or fresh migration with seeding: php artisan migrate:fresh --seed
+     */
     public function run(): void
     {
-        // Seed languages and categories first
+        $this->command->info('Starting database seeding...');
+
+        // Core data (required first)
         $this->call([
-            LanguageSeeder::class,
-            CategorySeeder::class,
+            LanguageSeeder::class,      // Programming languages
+            CategorySeeder::class,      // Snippet categories
+            TagSeeder::class,           // Tags for snippets
+            UserSeeder::class,          // Users (admin + test users)
         ]);
 
-        // Create admin user
-        User::create([
-            'username' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'full_name' => 'System Administrator',
-            'is_admin' => true,
-            'is_active' => true,
-            'email_verified_at' => now(),
+        // Content data
+        $this->call([
+            TeamSeeder::class,          // Teams and memberships
+            SnippetSeeder::class,       // Code snippets with versions
+            CollectionSeeder::class,    // Collections of snippets
+            CommentSeeder::class,       // Comments on snippets
         ]);
 
-        // Create test user
-        User::create([
-            'username' => 'mengheang',
-            'email' => 'chhunmengheang5@gmail.com',
-            'password' => Hash::make('12345678'),
-            'full_name' => 'Chhun Mengheang',
-            'bio' => 'A test user for development purposes.',
-            'is_admin' => false,
-            'is_active' => true,
-            'email_verified_at' => now(),
+        // Social/interaction data
+        $this->call([
+            FollowSeeder::class,        // User follow relationships
+            FavoriteSeeder::class,      // Snippet favorites
+            ShareSeeder::class,         // Snippet shares
+            NotificationSeeder::class,  // User notifications
         ]);
+
+        // System data
+        $this->call([
+            AuditLogSeeder::class,      // Audit logs
+        ]);
+
+        $this->command->info('Database seeding completed!');
+        $this->command->newLine();
+        $this->command->info('Test credentials:');
+        $this->command->info('  Admin: admin@example.com / password');
+        $this->command->info('  User:  chhunmengheang5@gmail.com / 12345678');
+        $this->command->info('  Other: john@example.com / password (and other test users)');
     }
 }
