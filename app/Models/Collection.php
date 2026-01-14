@@ -20,14 +20,19 @@ class Collection extends Model
         'name',
         'slug',
         'description',
+        'cover_image_url',
         'privacy',
         'snippet_count',
+        'view_count',
+        'is_featured',
     ];
 
     protected function casts(): array
     {
         return [
             'snippet_count' => 'integer',
+            'view_count' => 'integer',
+            'is_featured' => 'boolean',
         ];
     }
 

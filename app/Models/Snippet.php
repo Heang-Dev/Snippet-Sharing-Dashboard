@@ -18,39 +18,48 @@ class Snippet extends Model
 
     protected $fillable = [
         'user_id',
-        'language_id',
-        'category_id',
         'team_id',
+        'category_id',
         'title',
-        'slug',
         'description',
         'code',
-        'highlighted_code',
-        'file_name',
+        'highlighted_html',
+        'language',
         'privacy',
-        'password_hash',
-        'expires_at',
-        'views_count',
-        'favorites_count',
-        'comments_count',
-        'forks_count',
-        'forked_from_id',
-        'version',
-        'is_pinned',
-        'metadata',
+        'slug',
+        'version_number',
+        'parent_snippet_id',
+        'is_fork',
+        'is_featured',
+        'allow_comments',
+        'allow_forks',
+        'license',
+        'view_count',
+        'unique_view_count',
+        'fork_count',
+        'favorite_count',
+        'comment_count',
+        'share_count',
+        'trending_score',
+        'published_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'expires_at' => 'datetime',
-            'views_count' => 'integer',
-            'favorites_count' => 'integer',
-            'comments_count' => 'integer',
-            'forks_count' => 'integer',
-            'version' => 'integer',
-            'is_pinned' => 'boolean',
-            'metadata' => 'array',
+            'published_at' => 'datetime',
+            'version_number' => 'integer',
+            'view_count' => 'integer',
+            'unique_view_count' => 'integer',
+            'fork_count' => 'integer',
+            'favorite_count' => 'integer',
+            'comment_count' => 'integer',
+            'share_count' => 'integer',
+            'trending_score' => 'float',
+            'is_fork' => 'boolean',
+            'is_featured' => 'boolean',
+            'allow_comments' => 'boolean',
+            'allow_forks' => 'boolean',
         ];
     }
 
@@ -71,11 +80,6 @@ class Snippet extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function language(): BelongsTo
-    {
-        return $this->belongsTo(Language::class);
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -86,14 +90,14 @@ class Snippet extends Model
         return $this->belongsTo(Team::class);
     }
 
-    public function forkedFrom(): BelongsTo
+    public function parentSnippet(): BelongsTo
     {
-        return $this->belongsTo(Snippet::class, 'forked_from_id');
+        return $this->belongsTo(Snippet::class, 'parent_snippet_id');
     }
 
     public function forks(): HasMany
     {
-        return $this->hasMany(Snippet::class, 'forked_from_id');
+        return $this->hasMany(Snippet::class, 'parent_snippet_id');
     }
 
     public function versions(): HasMany
@@ -116,7 +120,7 @@ class Snippet extends Model
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class)->whereNull('parent_id');
+        return $this->hasMany(Comment::class)->whereNull('parent_comment_id');
     }
 
     public function allComments(): HasMany
@@ -156,12 +160,14 @@ class Snippet extends Model
         return $query->where('privacy', 'team');
     }
 
-    public function scopeNotExpired($query)
+    public function scopeFeatured($query)
     {
-        return $query->where(function ($q) {
-            $q->whereNull('expires_at')
-                ->orWhere('expires_at', '>', now());
-        });
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeTrending($query)
+    {
+        return $query->orderByDesc('trending_score');
     }
 
     public function scopeVisible($query, ?User $user = null)
@@ -198,9 +204,19 @@ class Snippet extends Model
         return $this->privacy === 'team';
     }
 
-    public function isExpired(): bool
+    public function isUnlisted(): bool
     {
-        return $this->expires_at && $this->expires_at->isPast();
+        return $this->privacy === 'unlisted';
+    }
+
+    public function isFork(): bool
+    {
+        return $this->is_fork;
+    }
+
+    public function isFeatured(): bool
+    {
+        return $this->is_featured;
     }
 
     public function isOwnedBy(User $user): bool
@@ -210,11 +226,7 @@ class Snippet extends Model
 
     public function canBeViewedBy(?User $user): bool
     {
-        if ($this->isExpired()) {
-            return false;
-        }
-
-        if ($this->isPublic()) {
+        if ($this->isPublic() || $this->isUnlisted()) {
             return true;
         }
 
@@ -235,6 +247,11 @@ class Snippet extends Model
 
     public function incrementViewCount(): void
     {
-        $this->increment('views_count');
+        $this->increment('view_count');
+    }
+
+    public function incrementUniqueViewCount(): void
+    {
+        $this->increment('unique_view_count');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -19,13 +20,21 @@ class Tag extends Model
         'description',
         'color',
         'usage_count',
+        'is_official',
+        'created_by',
     ];
 
     protected function casts(): array
     {
         return [
             'usage_count' => 'integer',
+            'is_official' => 'boolean',
         ];
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function getSlugOptions(): SlugOptions

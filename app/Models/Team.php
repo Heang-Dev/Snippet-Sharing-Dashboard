@@ -20,17 +20,23 @@ class Team extends Model
         'name',
         'slug',
         'description',
-        'owner_id',
         'avatar_url',
+        'owner_id',
+        'privacy',
+        'member_count',
+        'snippet_count',
+        'allow_member_invite',
+        'default_snippet_privacy',
         'is_active',
-        'settings',
     ];
 
     protected function casts(): array
     {
         return [
+            'member_count' => 'integer',
+            'snippet_count' => 'integer',
+            'allow_member_invite' => 'boolean',
             'is_active' => 'boolean',
-            'settings' => 'array',
         ];
     }
 
