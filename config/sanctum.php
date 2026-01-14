@@ -15,9 +15,21 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Ngrok Support (Local Development)
+    |--------------------------------------------------------------------------
+    |
+    | When APP_ENV=local, Ngrok domains are automatically included in stateful
+    | domains. This allows Sanctum cookie-based auth to work via Ngrok tunnel.
+    |
+    */
+
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+        '%s%s%s',
+        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1,',
+        // Auto-include Ngrok domains for local development
+        env('APP_ENV') === 'local' ? '*.ngrok-free.app,*.ngrok.io,' : '',
         Sanctum::currentApplicationUrlWithPort(),
         // Sanctum::currentRequestHost(),
     ))),

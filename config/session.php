@@ -152,7 +152,11 @@ return [
     |
     | This value determines the domain and subdomains the session cookie is
     | available to. By default, the cookie will be available to the root
-    | domain without subdomains. Typically, this shouldn't be changed.
+    | domain and all subdomains. Typically, this shouldn't be changed.
+    |
+    | For Ngrok testing:
+    | - Set SESSION_DOMAIN=null to let the browser determine the domain
+    | - This allows sessions to work on both local and Ngrok URLs
     |
     */
 
@@ -166,6 +170,10 @@ return [
     | By setting this option to true, session cookies will only be sent back
     | to the server if the browser has a HTTPS connection. This will keep
     | the cookie from being sent to you when it can't be done securely.
+    |
+    | For Ngrok testing:
+    | - Ngrok provides HTTPS, so this can be true or null
+    | - Set to null to auto-detect based on request scheme
     |
     */
 

@@ -38,10 +38,20 @@ return [
             'report' => false,
         ],
 
+        /*
+        |----------------------------------------------------------------------
+        | Public Disk - Ngrok Compatible
+        |----------------------------------------------------------------------
+        |
+        | Uses relative URL '/storage' instead of absolute URL for Ngrok
+        | compatibility. This ensures assets load correctly regardless of
+        | whether accessed via local URL or Ngrok tunnel.
+        |
+        */
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => '/storage', // Relative URL for Ngrok compatibility
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
